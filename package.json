@@ -1,0 +1,26 @@
+{
+  "name": "js-poker",
+  "version": "1.0.0",
+  "description": "Poker with HTML5 Canvas and vanilla JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "flow": "flow"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vs1998/js-poker.git"
+  },
+  "author": "vs1998",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vs1998/js-poker/issues"
+  },
+  "homepage": "https://github.com/vs1998/js-poker#readme",
+  "devDependencies": {
+    "flow-bin": "^0.101.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-watch": "^1.1.0"
+  }
+}
