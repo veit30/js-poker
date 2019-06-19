@@ -6,9 +6,16 @@ class MovingObject {
     this.rotation = rotation;
     // CANVAS
     this.canvas = canvas;
-    this.tableHeight = Math.floor(this.canvas.width*.4);
-    this.relXQ = (this.canvas.width*.5 - this.x) / this.tableHeight;
-    this.relYQ = (this.canvas.height*.5 - this.y) / this.tableHeight;
+    this.tableHeight = {
+      old: Math.floor(this.canvas.width*.4),
+      new: Math.floor(this.canvas.width*.4)
+    }
+    this.posQ = {
+      x: ObjectPosQ.x(this.canvas,this.x,this.tableHeight.old),
+      y: ObjectPosQ.y(this.canvas,this.y,this.tableHeight.old),
+    }
+    log(this.posQ.x);
+    log(this.posQ.y);
     // ANIMATION PROPERTIES
     this.eF = EasingFunction.linear;
     this.startTime = 0;
@@ -54,8 +61,27 @@ class MovingObject {
     }
   }
 
-  update() {
-    this.tableHeight = Math.floor(this.canvas.width*.4)
+  updateMove() {
+    if(this.running) {
+      let now = Date.now();
+      let tia = now - this.startTime;
+      let t = tia / this.animTime;
+      t = t > 1 ? 1 : t;
+      let fac = this.eF(t);
+
+      this.x = this.startPos.x + this.direction.x * fac * this.animLen;
+      this.y = this.startPos.y + this.direction.y * fac * this.animLen;
+      this.posQ.x = ObjectPosQ.x(this.canvas,this.x,this.tableHeight.old);
+      this.posQ.y = ObjectPosQ.y(this.canvas,this.y,this.tableHeight.old);
+
+      this.rotation = this.startRotation + fac * this.rotationLen;
+      if(this.endPos.x === this.x && this.endPos.y === this.y) {
+        this.running = !this.running;
+      }
+    }
+  }
+
+  updateTime() {
     if(this.delay > 0) {
       let delta, now;
       if(this.lastTime === 0) {
@@ -68,30 +94,26 @@ class MovingObject {
       this.delay -= delta;
       if(this.delay < 0) this.delay = 0;
     }
+  }
+
+  update() {
+    this.tableHeight.new = Math.floor(this.canvas.width*.4);
+    //log(this.tableHeight.new);
+    if (this.tableHeight.new < 360) {
+      log(this.posQ.x);
+    }
+    this.updateTime();
     if(this.init && this.delay === 0) {
       this.startTime = Date.now();
       this.init = !this.init;
       this.running = true;
     }
-    if(this.running) {
-      let now = Date.now();
-      let tia = now - this.startTime;
-      let t = tia / this.animTime;
-      t = t > 1 ? 1 : t;
-      let fac = this.eF(t);
+    this.updateMove();
+    if(this.tableHeight.new != this.tableHeight.old) {
+      this.x = this.canvas.width * .5 + this.tableHeight.new * this.posQ.x;
+      this.y = this.canvas.height * .5 + this.tableHeight.new * this.posQ.y;
 
-      this.x = this.startPos.x + this.direction.x * fac * this.animLen;
-      this.y = this.startPos.y + this.direction.y * fac * this.animLen;
-      this.rotation = this.startRotation + fac * this.rotationLen;
-      // this.relXFactor = this.canvas.width / this.x;
-      // this.relYFactor = this.canvas.height / this.y;
-      if(this.endPos.x === this.x && this.endPos.y === this.y) {
-        this.running = !this.running;
-      }
-    }
-    if(this.oldCanvasWidth != this.canvas.width) {
-      this.x = this.canvas.width * .5 + this.relXQ * this.tableHeight;
-      this.y = this.canvas.height * .5 + this.relYQ * this.tableHeight;
+      this.tableHeight.old = this.tableHeight.new
     }
   }
 }
