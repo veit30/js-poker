@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['js/src/*.js','js/start.js'],
+        files: 'js/src/*.js',
         tasks: ['concat'],
         options: {
           atBegin: true
