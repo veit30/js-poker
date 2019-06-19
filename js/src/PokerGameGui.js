@@ -15,14 +15,16 @@ class PokerGameGui {
     this.chips = [];
     this.setupCanvas();
     this.scale = this.canvas.height * .0017 * 50;
-    console.log(this.scale);
     this.table = new Table(this.ctx);
-    window.addEventListener("resize", () => {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.scale = this.canvas.height * .0017 * 50;
-        this.start();
-    });
+
+    this.addResizeListener();
+    // window.addEventListener("resize", () => {
+    //     this.canvas.width = window.innerWidth;
+    //     this.canvas.height = window.innerHeight;
+    //     this.scale = this.canvas.height * .0017 * 50;
+    //     this.start();
+    // });
+
     //this.start();
   }
 
@@ -30,7 +32,6 @@ class PokerGameGui {
     let h = Math.floor(.4*this.canvas.width);
     let rot, card, i=1;
     for(let ca of Object.keys(PlayerCardsPos)) {
-      console.log(i++);
       card = new Card(
         this.canvas.width*.6,
         this.canvas.height*.5,
@@ -40,6 +41,8 @@ class PokerGameGui {
       card.moveTo(PlayerCardsPos[ca](this.canvas),PlayerCardsRot[rot],'ease-out',1000,1000)
       this.cards.push(card);
     }
+
+
 
 
     // let card = new Card(
@@ -56,6 +59,28 @@ class PokerGameGui {
     // card2.moveTo(PlayerCardsPos.UR_TWO(this.canvas),PlayerCardsRot.UR,'ease-out',1000,1000)
     // this.cards.push(card);
     // this.cards.push(card2);
+  }
+
+  addResizeListener() {
+    this.resizeEnd;
+    window.addEventListener('resize', () => {
+      clearTimeout(this.resizeEnd);
+      this.resizeEnd = setTimeout(() => {
+        let evt = new Event('resize-end');
+        window.dispatchEvent(evt);
+      }, 200);
+    });
+    window.addEventListener('resize-end',() => {
+      log(this.canvas);
+      try {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.scale = this.canvas.height * .0017 * 50;
+      } catch (e if e instanceof TypeError) {
+        
+      }
+      this.start();
+    });
   }
 
   addCardAt(type,value,pos) {
