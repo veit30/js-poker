@@ -9,13 +9,13 @@ module.exports = function(grunt) {
         sourceMap: true
       },
       dist: {
-        src: 'js/src/*.js',
+        src: ['js/src/Utils.js','js/src/Constants.js','js/src/MovingObject.js','js/src/*.js','js/src/Table.js','js/start.js'],
         dest: 'js/dist/<%= pkg.name %>.js'
       }
     },
     watch: {
       scripts: {
-        files: 'js/src/*.js',
+        files: ['js/src/*.js','js/start.js'],
         tasks: ['concat'],
         options: {
           atBegin: true
