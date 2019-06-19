@@ -92,3 +92,12 @@ const EasingFunction = {
   easeInOut: t => {return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1},
   linear: t => {return t}
 }
+
+ObjectPosQ = {
+  x: (c,x,tH) => {
+    return (x - (c.width * .5)) / tH
+  },
+  y: (c,y,tH) => {
+    return (y - (c.height * .5)) / tH
+  }
+}
