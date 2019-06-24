@@ -91,7 +91,8 @@ class Card extends MovingGameObject {
 
     //draw pattern here
     // no pattern
-
+    // small Card symbol and big Card symbol
+    CardSymbol.render(x,y,scale*2,0,this.suit)
 
 
     switch(this.value) {

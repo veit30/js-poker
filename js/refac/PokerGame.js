@@ -36,7 +36,7 @@ class PokerGame {
       }, 200);
     });
     window.addEventListener('resize-end',() => {
-      window.poker.table.height =
+      window.poker.table.height = 
       try {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
