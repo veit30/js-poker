@@ -22,19 +22,23 @@ class PokerGame {
     Table.render();
   }
 
-  addCard(type,value) {
-    let h = Math.floor(.4*this.canvas.width);
-    let rot, card, i=1;
-    for(let ca of Object.keys(PlayerCardsPos)) {
-      card = new Card(
-        this.canvas.width*.6,
-        this.canvas.height*.5,
-        0,type,value,this.ctx);
-      card.flip();
-      rot = ca.split("_")[0];
-      card.moveTo(PlayerCardsPos[ca](this.canvas),PlayerCardsRot[rot],'ease-out',1000,1000)
-      this.cards.push(card);
-    }
+
+  // for testing
+  addCard(x,y,rotation,suit,value) {
+    let card = new Card(x,y,rotation,suit,value);
+    //card.flip();
+    this.cards.push(card);
+    // let rot, card, i=1;
+    // for(let ca of Object.keys(PlayerCardsPos)) {
+    //   card = new Card(
+    //     this.canvas.width*.6,
+    //     this.canvas.height*.5,
+    //     0,type,value,this.ctx);
+    //   card.flip();
+    //   rot = ca.split("_")[0];
+    //   card.moveTo(PlayerCardsPos[ca](this.canvas),PlayerCardsRot[rot],'ease-out',1000,1000)
+    //   this.cards.push(card);
+    // }
   }
 
   addResizeListener() {
@@ -98,7 +102,7 @@ class PokerGame {
     this.tableCanvas.id = 'table-canvas';
     this.gameCanvas.id = 'game-canvas';
     this.tableCanvas.style.zIndex = '1';
-    this.tableCanvas.style.zIndex = '2';
+    this.gameCanvas.style.zIndex = '2';
 
     document.body.appendChild(this.tableCanvas);
     document.body.appendChild(this.gameCanvas);

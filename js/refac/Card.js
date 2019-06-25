@@ -1,5 +1,5 @@
 class Card extends GameObject {
-  constructor(x,y,rotation,suit, value) {
+  constructor(x, y, rotation, suit, value) {
     super(x,y,rotation)
     this.suit = suit;
     this.value = value;
@@ -11,18 +11,19 @@ class Card extends GameObject {
   }
 
   render() {
-    this.isFace && this.drawFace(x,y,r) || !this.isFace && this.drawBack(x,y,r);
+    this.isFace && this.renderFace(this.x,this.y,this.rotation) ||
+    !this.isFace && this.renderBack(this.x,this.y,this.rotation);
   }
 
-  flipCard() {
+  flip() {
     this.isFace = !this.isFace;
   }
 
   renderBack() {
-    let ctx = this.ctx,
-    h = window.poker.table.height,
+    let ctx = window.poker.game.ctx,
+    h = window.poker.table.height * .15,
     w = h * .77,
-    rad = .06 * w,
+    r = .06 * w,
     x = this.x,
     y = this.y;
 
@@ -65,8 +66,8 @@ class Card extends GameObject {
   }
 
   renderFace() {
-    let ctx = this.ctx,
-    h = Math.floor(this.ctx.canvas.width*.4)*.15,
+    let ctx = window.poker.game.ctx,
+    h = Math.floor(ctx.canvas.width*.4)*.15,
     w = h * .77,
     r = .06*w,
     x = this.x,

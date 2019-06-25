@@ -4,4 +4,8 @@ class GameObject {
     this.y = y;
     this.rotation = rotation;
   }
+
+  update() {
+    
+  }
 }
