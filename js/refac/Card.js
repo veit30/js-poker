@@ -1,4 +1,4 @@
-class Card extends MovingGameObject {
+class Card extends GameObject {
   constructor(x,y,rotation,suit, value) {
     super(x,y,rotation)
     this.suit = suit;

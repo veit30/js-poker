@@ -1,14 +1,23 @@
+// controller for poker game
 class PokerGame {
   // maybe as player json?
-  constructor(id,options) {
+  constructor(options) {
 
-    this.id = id;
     this.options = options;
     this.players = [];
     this.cards = [];
     this.chips = [];
-    this.setupCanvas();
-    // this.addResizeListener();
+    window.poker = {
+      table: {
+        height: 0,
+        ctx: undefined
+      },
+      game: {
+        ctx: undefined
+      }
+  };
+    this.setupCanvases();
+    Table.render();
   }
 
   addCard(type,value) {
@@ -28,6 +37,7 @@ class PokerGame {
 
   addResizeListener() {
     this.resizeEnd;
+
     window.addEventListener('resize', () => {
       clearTimeout(this.resizeEnd);
       this.resizeEnd = setTimeout(() => {
@@ -35,22 +45,13 @@ class PokerGame {
         window.dispatchEvent(evt);
       }, 200);
     });
+
+
     window.addEventListener('resize-end',() => {
-      window.poker.table.height = 
-      try {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-      } catch (e) {
-        if(e instanceof TypeError) {
-          console.log(e);
-        }
-      }
+      window.poker.table.height = this.tableCanvas.clientWidth * .4;
+      Table.render();
       this.start();
     });
-  }
-
-  addCardAt(type,value,pos) {
-
   }
 
   generateCards() {
@@ -62,34 +63,24 @@ class PokerGame {
     this.chips.push(chip);
   }
 
-  clear() {
-    this.ctx.fillStyle = Color.white;
-    this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
-  }
-
-  reset() {
-    this.clear();
-    this.table.draw();
-  }
 
   renderIngame() {
-    this.reset();
     this.renderGO();
   }
 
-  renderGO() {
-    for(let card of this.cards) {card.draw()};
-    for(let chip of this.chips) {chip.draw()};
+  renderGameObjects() {
+    for(let card of this.cards) {card.render()};
+    for(let chip of this.chips) {chip.render()};
   }
 
-  updateGO() {
+  updateGameObjects() {
     for(let card of this.cards) {card.update();}
     for(let chip of this.chips) {chip.update();}
   }
 
   start() {
-    this.updateGO();
-    this.renderIngame();
+    this.updateGameObjects();
+    this.renderGameObjects();
     this.raf = requestAnimationFrame(() => this.start());
   }
 
@@ -98,11 +89,20 @@ class PokerGame {
     this.raf = undefined;
   }
 
-  setupCanvas() {
-    this.canvas = document.createElement("canvas");
+  setupCanvases() {
+    this.tableCanvas = document.createElement('canvas');
+    this.gameCanvas = document.createElement('canvas'),
 
-    this.canvas.id = this.id;
-    document.body.appendChild(this.canvas);
-    window.poker.ctx = this.canvas.getContext('2d');
+    this.tableCanvas.id = 'table-canvas';
+    this.gameCanvas.id = 'game-canvas';
+    this.tableCanvas.style.zIndex = '1';
+    this.tableCanvas.style.zIndex = '2';
+
+    document.body.appendChild(this.tableCanvas);
+    document.body.appendChild(this.gameCanvas);
+
+    window.poker.table.ctx = this.tableCanvas.getContext('2d');
+    window.poker.game.ctx = this.gameCanvas.getContext('2d');
+    window.poker.table.height = this.tableCanvas.width * .4;
   }
 }

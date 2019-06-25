@@ -4,7 +4,7 @@ class Exception {
   }
 }
 
-class NoGuiException {
+class NoGuiException extends Exception{
   constructor(message) {
     super(message);
     this.name = "NoGuiExcetion";

@@ -10,7 +10,7 @@ class CardSymbol {
   }
 
   static drawHearts(x,y,scale,rotation) {
-    let ctx = window.poker.ctx;
+    let ctx = window.poker.game.ctx;
     ctx.save();
     ctx.fillStyle = Color.red;
     ctx.translate(x, y)
@@ -28,7 +28,7 @@ class CardSymbol {
   }
 
   static drawTiles(x,y,scale,rotation) {
-    let ctx = window.poker.ctx;
+    let ctx = window.poker.game.ctx;
     ctx.save();
     ctx.fillStyle = Color.red;
     ctx.translate(x, y)
@@ -46,7 +46,7 @@ class CardSymbol {
   }
 
   static drawClovers(pos,scale,rotation) {
-    let ctx = window.poker.ctx;
+    let ctx = window.poker.game.ctx;
     ctx.save();
     ctx.fillStyle = Color.black;
     ctx.translate(x, y)
@@ -65,8 +65,8 @@ class CardSymbol {
     ctx.restore();
   }
 
-  static drawPikes(pos,scale,rotation,type,ctx) {
-    let ctx = window.poker.ctx;
+  static drawPikes(pos,scale,rotation) {
+    let ctx = window.poker.game.ctx;
     y1 = y + scale * .1;
     ctx.save();
     ctx.fillStyle = Color.black;
