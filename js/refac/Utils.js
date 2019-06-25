@@ -94,3 +94,5 @@ OBJECTPOSITIONQUOTIENT = {
     return (y - (c.height * .5)) / tH
   }
 }
+
+let glätten = x => ~~ (x + 0.5);

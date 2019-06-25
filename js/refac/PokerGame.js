@@ -10,13 +10,15 @@ class PokerGame {
     window.poker = {
       table: {
         height: 0,
-        ctx: undefined
+        ctx: undefined,
+        rotation: 0
       },
       game: {
         ctx: undefined
       }
-  };
-    this.setupCanvases();
+    };
+    this.setupCanvas();
+    this.addResizeListener();
     Table.render();
   }
 
@@ -39,6 +41,7 @@ class PokerGame {
     this.resizeEnd;
 
     window.addEventListener('resize', () => {
+      console.log('working');
       clearTimeout(this.resizeEnd);
       this.resizeEnd = setTimeout(() => {
         let evt = new Event('resize-end');
@@ -49,6 +52,10 @@ class PokerGame {
 
     window.addEventListener('resize-end',() => {
       window.poker.table.height = this.tableCanvas.clientWidth * .4;
+      this.tableCanvas.width = this.tableCanvas.clientWidth;
+      this.tableCanvas.height = this.tableCanvas.clientHeight;
+      this.gameCanvas.width = this.gameCanvas.clientWidth;
+      this.gameCanvas.height = this.gameCanvas.clientHeight;
       Table.render();
       this.start();
     });
@@ -61,11 +68,6 @@ class PokerGame {
   addChip(value) {
     let chip = new Chip(200,200,0,value,Color.red,this.ctx);
     this.chips.push(chip);
-  }
-
-
-  renderIngame() {
-    this.renderGO();
   }
 
   renderGameObjects() {
@@ -89,7 +91,7 @@ class PokerGame {
     this.raf = undefined;
   }
 
-  setupCanvases() {
+  setupCanvas() {
     this.tableCanvas = document.createElement('canvas');
     this.gameCanvas = document.createElement('canvas'),
 
@@ -100,6 +102,11 @@ class PokerGame {
 
     document.body.appendChild(this.tableCanvas);
     document.body.appendChild(this.gameCanvas);
+
+    this.tableCanvas.width = this.tableCanvas.clientWidth;
+    this.tableCanvas.height = this.tableCanvas.clientHeight;
+    this.gameCanvas.width = this.gameCanvas.clientWidth;
+    this.gameCanvas.height = this.gameCanvas.clientHeight;
 
     window.poker.table.ctx = this.tableCanvas.getContext('2d');
     window.poker.game.ctx = this.gameCanvas.getContext('2d');
