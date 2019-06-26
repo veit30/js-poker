@@ -1,5 +1,5 @@
 // controller for poker game
-class PokerGameController {
+export default class PokerGameController {
   // maybe as player json?
   constructor(options) {
 
