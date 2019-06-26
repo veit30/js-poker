@@ -1,0 +1,2 @@
+- refactoriung with global variable approach for ctx (window.ctx)
+- fix rendering with canvas.clientWidth and canvas.clientHeight instead of window.width

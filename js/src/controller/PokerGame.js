@@ -15,7 +15,8 @@ class PokerGame {
       },
       game: {
         ctx: undefined
-      }
+      },
+      resizeTimestamp: 0
     };
     this.setupCanvas();
     this.addResizeListener();
@@ -45,7 +46,6 @@ class PokerGame {
     this.resizeEnd;
 
     window.addEventListener('resize', () => {
-      console.log('working');
       clearTimeout(this.resizeEnd);
       this.resizeEnd = setTimeout(() => {
         let evt = new Event('resize-end');
@@ -55,6 +55,7 @@ class PokerGame {
 
 
     window.addEventListener('resize-end',() => {
+      window.poker.resizeTimestamp = Date.now();
       window.poker.table.height = this.tableCanvas.clientWidth * .4;
       this.tableCanvas.width = this.tableCanvas.clientWidth;
       this.tableCanvas.height = this.tableCanvas.clientHeight;
@@ -75,6 +76,8 @@ class PokerGame {
   }
 
   renderGameObjects() {
+    let ctx = window.poker.game.ctx;
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
     for(let card of this.cards) {card.render()};
     for(let chip of this.chips) {chip.render()};
   }
