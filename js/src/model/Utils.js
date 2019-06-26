@@ -1,4 +1,4 @@
-const COLOR = {
+export const COLOR = {
   darkGrey: '#303030',
   lightGreen: '#68b249',
   darkerGreen: '#4d8436',
@@ -9,14 +9,14 @@ const COLOR = {
   white: '#ececec'
 };
 
-const CARDSUIT = {
+export const CARDSUIT = {
   DIAMONDS: 1,
   HEARTS: 2,
   PIKES: 3,
   CLOVERS: 4
 };
 
-const CARDVALUE = {
+export const CARDVALUE = {
   ACE: 14,
   KING: 13,
   QUEEN: 12,
@@ -32,7 +32,7 @@ const CARDVALUE = {
   TWO: 2
 };
 
-const SUITCOLOR = suit => {
+export const SUITCOLOR = suit => {
   if (suit == 1 || suit == 2) {
     return COLOR.red;
   } else {
@@ -40,7 +40,7 @@ const SUITCOLOR = suit => {
   }
 }
 
-const VALUETEXT = value => {
+export const VALUETEXT = value => {
   switch (value) {
     case 14:
       return 'A';
@@ -55,7 +55,7 @@ const VALUETEXT = value => {
   }
 }
 
-const PLAYERPOSITION = [
+export const PLAYERPOSITION = [
   {
     cards: [
       pokerObject => {
@@ -202,7 +202,7 @@ const PLAYERPOSITION = [
   },
 ];
 
-const COMMUNITYCARDPOSITION = (pokerObject,index) => {
+export const communitycardPosition = (pokerObject,index) => {
   let factor = .05;
   return {
     x: pokerObject.table.ctx.canvas.width * (.4 + .05 * index),
@@ -210,7 +210,7 @@ const COMMUNITYCARDPOSITION = (pokerObject,index) => {
   }
 };
 
-const EASINGFUNCTION = {
+export const EASINGFUNCTION = {
   easeIn: t => {
     return t * t * t
   },
@@ -225,7 +225,7 @@ const EASINGFUNCTION = {
   }
 }
 
-OBJECTPOSITIONQUOTIENT = {
+export const OBJECTPOSITIONQUOTIENT = {
   x: (ctx, x, tableHeight) => {
     return (x - (ctx.canvas.width * .5)) / tableHeight;
   },
@@ -234,4 +234,4 @@ OBJECTPOSITIONQUOTIENT = {
   }
 }
 
-let round = x => ~~(x + 0.5);
+export let round = x => ~~(x + 0.5);
