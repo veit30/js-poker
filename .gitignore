@@ -1,6 +1,4 @@
-# ignore files
-.flowconfig
 node_modules/
 js/dist/
-index.js
 TODO
+images/
