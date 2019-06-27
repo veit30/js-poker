@@ -331,7 +331,7 @@ export default class RenderEngine {
     ctx.restore();
   }
 
-  resetCanvas() {
+  clear() {
     this.ctx.clearRect(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
   }
 
