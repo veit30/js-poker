@@ -1,6 +1,5 @@
-class CardText {
-  static render(x,y,size,text,color) {
-    let ctx = window.poker.game.ctx;
+export default class CardText {
+  static render(x,y,size,text,color,ctx) {
     ctx.save();
     ctx.fillStyle = color;
     ctx.font = 'bold ' + size + 'px Kreon-Bold';

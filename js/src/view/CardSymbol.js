@@ -1,16 +1,17 @@
-class CardSymbol {
+import {COLOR} from '../model/Utils.js';
 
-  static render(x,y,scale,rotation,suit) {
+export default class CardSymbol {
+
+  static render(x,y,rotation,scale,suit,ctx) {
     switch(suit) {
-      case 1: this.renderDiamonds(x,y,scale,rotation); break;
-      case 2: this.renderHearts(x,y,scale,rotation); break;
-      case 3: this.renderPikes(x,y,scale,rotation); break;
-      case 4: this.renderClovers(x,y,scale,rotation); break;
+      case 1: this.renderDiamonds(x,y,rotation,scale,ctx); break;
+      case 2: this.renderHearts(x,y,rotation,scale,ctx); break;
+      case 3: this.renderPikes(x,y,rotation,scale,ctx); break;
+      case 4: this.renderClovers(x,y,rotation,scale,ctx); break;
     }
   }
 
-  static renderHearts(x,y,scale,rotation) {
-    let ctx = window.poker.game.ctx;
+  static renderHearts(x,y,rotation,scale,ctx) {
     ctx.save();
     ctx.fillStyle = COLOR.red;
     ctx.translate(x, y)
@@ -27,8 +28,7 @@ class CardSymbol {
     ctx.restore();
   }
 
-  static renderDiamonds(x,y,scale,rotation) {
-    let ctx = window.poker.game.ctx;
+  static renderDiamonds(x,y,rotation,scale,ctx) {
     ctx.save();
     ctx.fillStyle = COLOR.red;
     ctx.translate(x, y)
@@ -45,8 +45,7 @@ class CardSymbol {
 
   }
 
-  static renderClovers(x,y,scale,rotation) {
-    let ctx = window.poker.game.ctx;
+  static renderClovers(x,y,rotation,scale,ctx) {
     ctx.save();
     ctx.fillStyle = COLOR.black;
     ctx.translate(x, y)
@@ -65,8 +64,7 @@ class CardSymbol {
     ctx.restore();
   }
 
-  static renderPikes(x,y,scale,rotation) {
-    let ctx = window.poker.game.ctx;
+  static renderPikes(x,y,rotation,scale,ctx) {
     ctx.save();
     ctx.fillStyle = COLOR.black;
     ctx.translate(x, y)
