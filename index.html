@@ -2,17 +2,39 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Python Poker</title>
+    <title>test</title>
     <style media="screen">
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
     }
+    canvas {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+    }
+    @font-face{
+      font-family: "Kreon-Bold";
+      src: url('./fonts/Kreon-Bold.ttf');
+}
     </style>
   </head>
   <body>
-    <script type="text/javascript" src="./js/dist/js-poker.js"></script>
-    <script type="text/javascript" src="./js/start.js"></script>
+    <div style="display:none;">
+      <img id="source"
+       src="./images/backside2.jpg"
+       width="300" height="227">
+     </div>
+    <script type="module" src="js/src/model/Exceptions.js"></script>
+    <script type="module" src="js/src/model/Utils.js"></script>
+    <script type="module" src="js/src/view/RenderEngine.js"></script>
+    <script type="module" src="js/src/model/GameObject.js"></script>
+    <script type="module" src="js/src/view/CardSymbol.js"></script>
+    <script type="module" src="js/src/view/CardText.js"></script>
+    <script type="module" src="js/src/model/Chip.js"></script>
+    <script type="module" src="js/src/model/Card.js"></script>
+    <script type="module" src="js/src/controller/PokerGameController.js"></script>
+    <script type="module" src="js/src/start.js"></script>
   </body>
 </html>
