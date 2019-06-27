@@ -27,7 +27,7 @@ export default class PokerGameController {
     this.setupCanvas();
     this.tableView = new RenderEngine(this.tableCanvas.getContext('2d'));
     this.gameView = new RenderEngine(this.gameCanvas.getContext('2d'));
-    this.gameObjectsUpdater = new GameObjectUpdater(this.gameCanvas.getContext('2d'));
+    this.objectController = new GameObjectController(this.gameCanvas.getContext('2d'));
     this.addResizeListener();
     this.tableView.renderBackground(COLOR.lightGray);
     this.tableView.renderTable();
@@ -37,9 +37,10 @@ export default class PokerGameController {
   // for testing
   addCard(x,y,rotation,suit,value) {
     let card = new Card(x,y,rotation,suit,value);
-    this.gameObjectsUpdater.calcRelPosProp(card);
+    this.objectController.calcRelPosProp(card);
     card.flip();
     this.cards.push(card);
+
     // let rot, card, i=1;
     // for(let ca of Object.keys(PlayerCardsPos)) {
     //   card = new Card(
@@ -51,6 +52,17 @@ export default class PokerGameController {
     //   card.moveTo(PlayerCardsPos[ca](this.canvas),PlayerCardsRot[rot],'ease-out',1000,1000)
     //   this.cards.push(card);
     // }
+  }
+
+  // TEST
+  addCardWithMoves(x,y,rotation,suit,value,moves) {
+    let card = new Card(x,y,rotation,suit,value);
+    this.objectController.calcRelPosProp(card);
+    card.flip();
+    for (let move of moves) {
+      this.objectController.addMove(card,move);
+    }
+    this.cards.push(card);
   }
 
   addResizeListener() {
@@ -74,7 +86,7 @@ export default class PokerGameController {
       this.gameCanvas.height = this.gameCanvas.clientHeight;
       this.tableView.renderBackground(COLOR.lightGray);
       this.tableView.renderTable();
-      this.gameObjectsUpdater.windowResized = true;
+      this.objectController.windowResized = true;
       this.start();
     });
   }
@@ -90,6 +102,7 @@ export default class PokerGameController {
 
   renderGameObjects() {
     let gameObjects = this.cards.concat(this.chips);
+    this.gameView.clear();
     for(let go of gameObjects) {
       switch(go.constructor.name) {
         case 'Card': this.gameView.renderCard(go); break;
@@ -101,10 +114,10 @@ export default class PokerGameController {
   updateGameObjects() {
     let gameObjects = this.cards.concat(this.chips);
     for (let go of gameObjects) {
-      this.gameObjectsUpdater.update(go);
+      this.objectController.update(go);
     }
-    if (this.gameObjectsUpdater.windowResized) {
-      this.gameObjectsUpdater.windowResized = false;
+    if (this.objectController.windowResized) {
+      this.objectController.windowResized = false;
     }
   }
 
