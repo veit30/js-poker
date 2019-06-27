@@ -14,7 +14,7 @@ class HandEvaluator {
   }
 
   static evalWinner(tableData) {
-    let communityCards = tableData.community_cards;
+    let communityCards = tableData.communityCards;
     let allCards,evaluation,result,winner;
     let playersResults = [], i = 0;
     for(let player of tableData.players) {
@@ -23,8 +23,6 @@ class HandEvaluator {
       result = this.evalResult(evaluation);
       playersResults[i] = player;
       playersResults[i++].result = result;
-      // log(evaluation);
-      // log(result);
     }
     log(playersResults);
     winner = playersResults.sort((a,b) => {
@@ -114,20 +112,6 @@ class HandEvaluator {
     return result;
   }
 
-
-  /*  RANKING
-    (ROYAL FLUSH)
-    STRAIGHT FLUSH
-    FOUR OF A KIND
-    FULL HOUSE
-    FLUSH
-    STRAIGHT
-    THREE OF A KIND
-    TWO PAIR
-    ONE PAIR
-    HIGH CARD
-  */
-
   static evaluate(cards) {
     return cards.sort((a,b) => {
       return a.value-b.value;
@@ -211,7 +195,7 @@ let testObj = {
       }]
     }
   ],
-  community_cards: [{
+  communityCards: [{
     value: 4,
     type: 2
   },{
