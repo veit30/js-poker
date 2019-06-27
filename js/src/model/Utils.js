@@ -59,16 +59,16 @@ export const textFromValue = value => {
 export const PLAYER_POSITION = [
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .063,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .35
+          x: canvas.width * .5 -  (canvas.width * .4) * .063,
+          y: canvas.height * .5 -  (canvas.width * .4) * .35
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .063,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .35
+          x: canvas.width * .5 +  (canvas.width * .4) * .063,
+          y: canvas.height * .5 -  (canvas.width * .4) * .35
         };
       }
     ],
@@ -77,16 +77,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .652,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .265
+          x: canvas.width * .5 +  (canvas.width * .4) * .652,
+          y: canvas.height * .5 -  (canvas.width * .4) * .265
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .548,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .335
+          x: canvas.width * .5 +  (canvas.width * .4) * .548,
+          y: canvas.height * .5 -  (canvas.width * .4) * .335
         };
       }
     ],
@@ -95,16 +95,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .8,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .063
+          x: canvas.width * .5 +  (canvas.width * .4) * .8,
+          y: canvas.height * .5 -  (canvas.width * .4) * .063
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .8,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .063
+          x: canvas.width * .5 +  (canvas.width * .4) * .8,
+          y: canvas.height * .5 +  (canvas.width * .4) * .063
         };
       }
     ],
@@ -113,16 +113,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .652,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .265
+          x: canvas.width * .5 +  (canvas.width * .4) * .652,
+          y: canvas.height * .5 +  (canvas.width * .4) * .265
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .548,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .335
+          x: canvas.width * .5 +  (canvas.width * .4) * .548,
+          y: canvas.height * .5 +  (canvas.width * .4) * .335
         };
       }
     ],
@@ -131,16 +131,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .063,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .35
+          x: canvas.width * .5 -  (canvas.width * .4) * .063,
+          y: canvas.height * .5 +  (canvas.width * .4) * .35
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 +  pokerObject.table.height * .063,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .35
+          x: canvas.width * .5 +  (canvas.width * .4) * .063,
+          y: canvas.height * .5 +  (canvas.width * .4) * .35
         };
       }
     ],
@@ -149,16 +149,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .652,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .265
+          x: canvas.width * .5 -  (canvas.width * .4) * .652,
+          y: canvas.height * .5 +  (canvas.width * .4) * .265
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .548,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .335
+          x: canvas.width * .5 -  (canvas.width * .4) * .548,
+          y: canvas.height * .5 +  (canvas.width * .4) * .335
         };
       }
     ],
@@ -167,16 +167,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .8,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .063
+          x: canvas.width * .5 -  (canvas.width * .4) * .8,
+          y: canvas.height * .5 -  (canvas.width * .4) * .063
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .8,
-          y: pokerObject.table.ctx.canvas.height * .5 +  pokerObject.table.height * .063
+          x: canvas.width * .5 -  (canvas.width * .4) * .8,
+          y: canvas.height * .5 +  (canvas.width * .4) * .063
         };
       }
     ],
@@ -185,16 +185,16 @@ export const PLAYER_POSITION = [
   },
   {
     cards: [
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .652,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .265
+          x: canvas.width * .5 -  (canvas.width * .4) * .652,
+          y: canvas.height * .5 -  (canvas.width * .4) * .265
         };
       },
-      pokerObject => {
+      canvas => {
         return {
-          x: pokerObject.table.ctx.canvas.width * .5 -  pokerObject.table.height * .548,
-          y: pokerObject.table.ctx.canvas.height * .5 -  pokerObject.table.height * .335
+          x: canvas.width * .5 -  (canvas.width * .4) * .548,
+          y: canvas.height * .5 -  (canvas.width * .4) * .335
         };
       }
     ],
@@ -238,3 +238,4 @@ export const POS_QUOTIENT_CALC = {
 }
 
 export let round = x => ~~(x + 0.5);
+export let rT = x => ~~(x*1000 + 0.5) / 1000;
