@@ -1,6 +1,6 @@
 import RenderEngine from '../view/RenderEngine.js';
 import Card from '../model/Card.js';
-import GameObjectUpdater from '../model/GameObjectUpdater.js';
+import GameObjectController from './GameObjectController.js';
 import {COLOR} from '../model/Utils.js';
 // controller for poker game
 export default class PokerGameController {

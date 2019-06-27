@@ -1,6 +1,6 @@
 import {POS_QUOTIENT_CALC} from './Utils.js';
 
-export default class GameObjectUpdater {
+export default class GameObjectController {
   constructor(ctx) {
     this.ctx = ctx;
     this.windowResized = false;
