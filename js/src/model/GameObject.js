@@ -8,6 +8,8 @@ export default class GameObject {
 
     this.posQuotient = {};
 
+    this.endPosQuotient = {};
+
     this.moveQueue = [];
 
     // ANIMATION PROPERTIES
