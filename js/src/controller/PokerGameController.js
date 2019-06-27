@@ -1,3 +1,7 @@
+import RenderEngine from '../view/RenderEngine.js';
+import Card from '../model/Card.js';
+import GameObjectUpdater from '../model/GameObjectUpdater.js';
+import {COLOR} from '../model/Utils.js';
 // controller for poker game
 export default class PokerGameController {
   // maybe as player json?
@@ -7,6 +11,8 @@ export default class PokerGameController {
     this.players = [];
     this.cards = [];
     this.chips = [];
+    this.tableCanvas;
+    this.gameCanvas;
     window.poker = {
       table: {
         height: 0,
@@ -19,15 +25,20 @@ export default class PokerGameController {
       resizeTimestamp: 0
     };
     this.setupCanvas();
+    this.tableView = new RenderEngine(this.tableCanvas.getContext('2d'));
+    this.gameView = new RenderEngine(this.gameCanvas.getContext('2d'));
+    this.gameObjectsUpdater = new GameObjectUpdater(this.gameCanvas.getContext('2d'));
     this.addResizeListener();
-    Table.render();
+    this.tableView.renderBackground(COLOR.lightGray);
+    this.tableView.renderTable();
   }
 
 
   // for testing
   addCard(x,y,rotation,suit,value) {
     let card = new Card(x,y,rotation,suit,value);
-    //card.flip();
+    this.gameObjectsUpdater.calcRelPosProp(card);
+    card.flip();
     this.cards.push(card);
     // let rot, card, i=1;
     // for(let ca of Object.keys(PlayerCardsPos)) {
@@ -47,6 +58,7 @@ export default class PokerGameController {
 
     window.addEventListener('resize', () => {
       clearTimeout(this.resizeEnd);
+      this.stop();
       this.resizeEnd = setTimeout(() => {
         let evt = new Event('resize-end');
         window.dispatchEvent(evt);
@@ -56,12 +68,13 @@ export default class PokerGameController {
 
     window.addEventListener('resize-end',() => {
       window.poker.resizeTimestamp = Date.now();
-      window.poker.table.height = this.tableCanvas.clientWidth * .4;
       this.tableCanvas.width = this.tableCanvas.clientWidth;
       this.tableCanvas.height = this.tableCanvas.clientHeight;
       this.gameCanvas.width = this.gameCanvas.clientWidth;
       this.gameCanvas.height = this.gameCanvas.clientHeight;
-      Table.render();
+      this.tableView.renderBackground(COLOR.lightGray);
+      this.tableView.renderTable();
+      this.gameObjectsUpdater.windowResized = true;
       this.start();
     });
   }
@@ -76,15 +89,23 @@ export default class PokerGameController {
   }
 
   renderGameObjects() {
-    let ctx = window.poker.game.ctx;
-    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-    for(let card of this.cards) {card.render()};
-    for(let chip of this.chips) {chip.render()};
+    let gameObjects = this.cards.concat(this.chips);
+    for(let go of gameObjects) {
+      switch(go.constructor.name) {
+        case 'Card': this.gameView.renderCard(go); break;
+        case 'Chip': this.gameView.renderChip(go); break;
+      }
+    }
   }
 
   updateGameObjects() {
-    for(let card of this.cards) {card.update();}
-    for(let chip of this.chips) {chip.update();}
+    let gameObjects = this.cards.concat(this.chips);
+    for (let go of gameObjects) {
+      this.gameObjectsUpdater.update(go);
+    }
+    if (this.gameObjectsUpdater.windowResized) {
+      this.gameObjectsUpdater.windowResized = false;
+    }
   }
 
   start() {
@@ -114,9 +135,5 @@ export default class PokerGameController {
     this.tableCanvas.height = this.tableCanvas.clientHeight;
     this.gameCanvas.width = this.gameCanvas.clientWidth;
     this.gameCanvas.height = this.gameCanvas.clientHeight;
-
-    window.poker.table.ctx = this.tableCanvas.getContext('2d');
-    window.poker.game.ctx = this.gameCanvas.getContext('2d');
-    window.poker.table.height = this.tableCanvas.width * .4;
   }
 }
