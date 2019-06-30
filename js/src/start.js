@@ -3,16 +3,10 @@ import {communityCardPosition, PLAYER_POSITION,CARD_SUIT,CARD_VALUE} from './mod
 
 let pokerController = new PokerGameController();
 
-for(let i = 0; i < 5; i++) {
-  pokerController.addCard(
-    communityCardPosition(pokerController.tableCanvas,i).x,
-    communityCardPosition(pokerController.tableCanvas,i).y,
-    0,
-    Math.floor(Math.random() * 4) + 1,
-    Math.floor(Math.random() * 13) + 2
-  );
-}
+pokerController.startGame();
+pokerController.start();
 
+/*
 pokerController.addCardWithMoves(
   PLAYER_POSITION[0].cards[0](pokerController.gameCanvas).x,
   PLAYER_POSITION[0].cards[0](pokerController.gameCanvas).y,
@@ -38,6 +32,7 @@ pokerController.addCardWithMoves(
     },
   ]
 );
+*/
 
 
 pokerController.start();
