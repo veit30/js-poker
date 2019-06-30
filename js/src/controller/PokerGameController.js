@@ -1,7 +1,12 @@
 import RenderEngine from '../view/RenderEngine.js';
 import Card from '../model/Card.js';
+import Player from '../model/Player.js';
 import GameObjectController from './GameObjectController.js';
-import {COLOR} from '../model/Utils.js';
+import InputHandler from './InputHandler.js';
+import {
+  COLOR,CARD_SUIT,CARD_VALUE,KEY,
+  communityCardPosition, playersCardRotation, playersCardPosition
+} from '../model/Utils.js';
 // controller for poker game
 export default class PokerGameController {
   // maybe as player json?
@@ -10,20 +15,15 @@ export default class PokerGameController {
     this.options = options;
     this.players = [];
     this.cards = [];
+    this.communityCards = [];
     this.chips = [];
     this.tableCanvas;
     this.gameCanvas;
-    window.poker = {
-      table: {
-        height: 0,
-        ctx: undefined,
-        rotation: 0
-      },
-      game: {
-        ctx: undefined
-      },
-      resizeTimestamp: 0
+    this.inputCanvas;
+    this.game = {
+      round: 0,
     };
+
     this.setupCanvas();
     this.tableView = new RenderEngine(this.tableCanvas.getContext('2d'));
     this.gameView = new RenderEngine(this.gameCanvas.getContext('2d'));
@@ -31,38 +31,8 @@ export default class PokerGameController {
     this.addResizeListener();
     this.tableView.renderBackground(COLOR.lightGray);
     this.tableView.renderTable();
-  }
 
-
-  // for testing
-  addCard(x,y,rotation,suit,value) {
-    let card = new Card(x,y,rotation,suit,value);
-    this.objectController.calcRelPosProp(card);
-    card.flip();
-    this.cards.push(card);
-
-    // let rot, card, i=1;
-    // for(let ca of Object.keys(PlayerCardsPos)) {
-    //   card = new Card(
-    //     this.canvas.width*.6,
-    //     this.canvas.height*.5,
-    //     0,type,value,this.ctx);
-    //   card.flip();
-    //   rot = ca.split("_")[0];
-    //   card.moveTo(PlayerCardsPos[ca](this.canvas),PlayerCardsRot[rot],'ease-out',1000,1000)
-    //   this.cards.push(card);
-    // }
-  }
-
-  // TEST
-  addCardWithMoves(x,y,rotation,suit,value,moves) {
-    let card = new Card(x,y,rotation,suit,value);
-    this.objectController.calcRelPosProp(card);
-    card.flip();
-    for (let move of moves) {
-      this.objectController.addMove(card,move);
-    }
-    this.cards.push(card);
+    this.inputHandler = new InputHandler();
   }
 
   addResizeListener() {
@@ -79,11 +49,7 @@ export default class PokerGameController {
 
 
     window.addEventListener('resize-end',() => {
-      window.poker.resizeTimestamp = Date.now();
-      this.tableCanvas.width = this.tableCanvas.clientWidth;
-      this.tableCanvas.height = this.tableCanvas.clientHeight;
-      this.gameCanvas.width = this.gameCanvas.clientWidth;
-      this.gameCanvas.height = this.gameCanvas.clientHeight;
+      this.updateCanvas();
       this.tableView.renderBackground(COLOR.lightGray);
       this.tableView.renderTable();
       this.objectController.windowResized = true;
@@ -92,7 +58,39 @@ export default class PokerGameController {
   }
 
   generateCards() {
+    let card;
+    for (let suit of Object.keys(CARD_SUIT)) {
+      for (let value of Object.keys(CARD_VALUE)) {
+        card = new Card(
+          this.gameCanvas.width * .5,
+          this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+          0,
+          CARD_SUIT[suit],
+          CARD_VALUE[value]
+        );
+        this.objectController.calcRelPosProp(card);
+        this.cards.push(card);
+      }
+    }
+  }
 
+  shuffleCards() {
+    for (let i = 0, len = this.cards.length; i < len; i++) {
+      let randomIndex = Math.floor(Math.random() * len);
+      let tmpCard1 = this.cards[randomIndex];
+      let tmpCard2 = this.cards[i];
+      this.cards[i] = tmpCard1;
+      this.cards[randomIndex] = tmpCard2;
+    }
+  }
+
+  updateCanvas() {
+    this.tableCanvas.width = this.tableCanvas.clientWidth;
+    this.tableCanvas.height = this.tableCanvas.clientHeight;
+    this.gameCanvas.width = this.gameCanvas.clientWidth;
+    this.gameCanvas.height = this.gameCanvas.clientHeight;
+    this.inputCanvas.width = this.inputCanvas.clientWidth;
+    this.inputCanvas.height = this.inputCanvas.clientHeight;
   }
 
   addChip(value) {
@@ -101,8 +99,22 @@ export default class PokerGameController {
   }
 
   renderGameObjects() {
-    let gameObjects = this.cards.concat(this.chips);
+    let gameObjects = [];
+    for (let player of this.players) {
+      gameObjects = gameObjects.concat(player.cards);
+    }
+    gameObjects = gameObjects
+      .concat([this.cards[0]])
+      .concat(this.chips)
+      .concat(this.communityCards);
     this.gameView.clear();
+    this.gameView.renderDeckShadow(
+      {
+        x: this.gameCanvas.width * .5,
+        y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35
+      },
+      'rgba(0,0,0,0.4)'
+    );
     for(let go of gameObjects) {
       switch(go.constructor.name) {
         case 'Card': this.gameView.renderCard(go); break;
@@ -112,7 +124,14 @@ export default class PokerGameController {
   }
 
   updateGameObjects() {
-    let gameObjects = this.cards.concat(this.chips);
+    let gameObjects = [];
+    for (let player of this.players) {
+      gameObjects = gameObjects.concat(player.cards);
+    }
+    gameObjects = gameObjects
+      .concat(this.cards)
+      .concat(this.chips)
+      .concat(this.communityCards);
     for (let go of gameObjects) {
       this.objectController.update(go);
     }
@@ -121,10 +140,81 @@ export default class PokerGameController {
     }
   }
 
+  startGame() {
+    this.addPlayer('John',3);
+    this.addPlayer('Adam',4);
+    this.addPlayer('Flavio',6);
+    this.addPlayer('Ron',7);
+    this.generateCards();
+    this.shuffleCards();
+    this.dealCards();
+    this.game.round = 1;
+  }
+
+  addPlayer(name,id) {
+    let player = new Player(name,id)
+    this.players.push(player);
+  }
+
+  // basic game loop function
   start() {
+
+    if (this.inputHandler.askKeyPress(KEY.C)) {
+      this.flopTurnRiver();
+      this.game.round++;
+    }
+
     this.updateGameObjects();
     this.renderGameObjects();
     this.raf = requestAnimationFrame(() => this.start());
+  }
+
+  flopTurnRiver() {
+    let card,index = [];
+    if (this.game.round === 1 && this.communityCards.length < 3) {
+      index = [0,1,2];
+    } else if (this.game.round === 2 && this.communityCards.length < 4) {
+      index = [3];
+    } else if (this.game.round === 3 && this.communityCards.length < 5) {
+      index = [4];
+    }
+
+    for (let i of index) {
+      card = this.cards.shift();
+      this.objectController.addMove(card,{
+        xd: communityCardPosition(this.gameCanvas,i).x,
+        yd: communityCardPosition(this.gameCanvas,i).y,
+        rotation: 0,
+        easing: 'ease-out',
+        time: 500,
+        delay: 10,
+        flipAfter: true
+      })
+      this.communityCards.push(card);
+    }
+
+    console.log(this.communityCards.length)
+  }
+
+  dealCards() {
+    let delay = 500;
+    let card;
+    for(let i = 0; i < 2; i++) {
+      for (let p = 0; p < this.players.length; p++) {
+        card = this.cards.shift();
+        this.objectController.addMove(card,{
+          xd: playersCardPosition(this.players[p].id,i,this.gameCanvas).x,
+          yd: playersCardPosition(this.players[p].id,i,this.gameCanvas).y,
+          rotation: playersCardRotation(this.players[p].id),
+          easing: 'ease-out',
+          time: 500,
+          delay: delay,
+          flipAfter: true
+        })
+        delay += 500;
+        this.players[p].cards.push(card);
+      }
+    }
   }
 
   stop() {
@@ -134,19 +224,21 @@ export default class PokerGameController {
 
   setupCanvas() {
     this.tableCanvas = document.createElement('canvas');
-    this.gameCanvas = document.createElement('canvas'),
+    this.gameCanvas = document.createElement('canvas');
+    this.inputCanvas = document.createElement('canvas');
 
     this.tableCanvas.id = 'table-canvas';
     this.gameCanvas.id = 'game-canvas';
+    this.inputCanvas.id = 'input-canvas';
     this.tableCanvas.style.zIndex = '1';
     this.gameCanvas.style.zIndex = '2';
+    this.inputCanvas.style.zIndex = '3';
 
     document.body.appendChild(this.tableCanvas);
     document.body.appendChild(this.gameCanvas);
+    document.body.appendChild(this.inputCanvas);
 
-    this.tableCanvas.width = this.tableCanvas.clientWidth;
-    this.tableCanvas.height = this.tableCanvas.clientHeight;
-    this.gameCanvas.width = this.gameCanvas.clientWidth;
-    this.gameCanvas.height = this.gameCanvas.clientHeight;
+    this.updateCanvas();
+
   }
 }
