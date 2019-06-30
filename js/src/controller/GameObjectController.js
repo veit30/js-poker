@@ -17,13 +17,16 @@ export default class GameObjectController {
     obj.isRunning && this.updateMove(obj);
     if(this.windowResized) {
       let tableHeight = this.ctx.canvas.width * .4;
-      if (obj.isRunning) {
+      if (obj.isRunning || obj.delay !== 0) {
         obj.x = this.ctx.canvas.width * .5 + tableHeight * obj.endPosQuotient.x;
         obj.y = this.ctx.canvas.height * .5 + tableHeight * obj.endPosQuotient.y;
         obj.posQuotient.x = obj.endPosQuotient.x;
         obj.posQuotient.y = obj.endPosQuotient.y;
         obj.rotation = obj.startRotation + obj.rotationLen;
+        obj.delay = 0;
+        obj.isInitialized = false;
         obj.isRunning = false;
+        obj.flipAfter && obj.flip();
       } else {
         obj.x = this.ctx.canvas.width * .5 + tableHeight * obj.posQuotient.x;
         obj.y = this.ctx.canvas.height * .5 + tableHeight * obj.posQuotient.y;
@@ -44,8 +47,15 @@ export default class GameObjectController {
     obj.rotation = obj.startRotation + factor * obj.rotationLen;
 
     if(obj.endPos.x === obj.x && obj.endPos.y === obj.y) {
-      this.calcRelPosProp(obj);
+      let tableHeight = this.ctx.canvas.width * .4;
+      obj.x = this.ctx.canvas.width * .5 + tableHeight * obj.endPosQuotient.x;
+      obj.y = this.ctx.canvas.height * .5 + tableHeight * obj.endPosQuotient.y;
+      obj.posQuotient.x = obj.endPosQuotient.x;
+      obj.posQuotient.y = obj.endPosQuotient.y;
+      obj.rotation = obj.startRotation + obj.rotationLen;
+      // this.calcRelPosProp(obj);
       obj.isRunning = false;
+      obj.flipAfter && obj.flip();
     }
   }
 
@@ -75,7 +85,7 @@ export default class GameObjectController {
     }
   }
 
-  initMove(obj,{xd,yd,rotation,easing,time,delay}) {
+  initMove(obj,{xd,yd,rotation,easing,time,delay,flipAfter}) {
     obj.startTime = 0;
     obj.isInitialized = true;
     obj.animTime = time;
@@ -97,12 +107,18 @@ export default class GameObjectController {
 
     obj.delay = delay;
 
+    obj.flipAfter = flipAfter;
+
     switch(easing) {
       case 'ease-in': obj.eF = EASING_FUNCTION.easeIn;break;
       case 'ease-out': obj.eF = EASING_FUNCTION.easeOut;break;
       case 'ease-in-out': obj.eF = EASING_FUNCTION.easeInOut;break;
       default: obj.eF = EASING_FUNCTION.linear;
     }
+  }
+
+  addAction(obj,func,delay) {
+    obj.actions.push(func);
   }
 
   calcRelPosProp(obj) {
