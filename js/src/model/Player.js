@@ -2,11 +2,11 @@ let globalId = 0;
 let nextId = () => {return globalId++;}
 let resetId = () => {globalId = 0;}
 
-class Player {
-  constructor(name) {
+export default class Player {
+  constructor(name,id) {
     this.name = name;
     this.cards = [];
-    this.id = nextId();
+    this.id = id;
     this.chips = [];
   }
 
