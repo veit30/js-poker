@@ -11,19 +11,16 @@ Poker with HTML5 Canvas and JavaScript.
 - Animations for card dealing and chip calling
 
 ## Planned
-- finalize card back
+- finalize card back (almost done)
 - Error handling
 - Tests
-- User Inputs
+- User Inputs (already started)
+- Server client implementation to play in local network
 - Game flow control:
   - start screen and menu
   - (avatars; can be quite funny for multiplayer)
-  - poker functionality (calling,passing,raising,checking,etc.)
-- Bot player (maybe pretty simple one)
+  - poker functionality (calling, passing, raising, checking, etc.)
 - more customizing control for Cards, Chips, Table and more
-- Modes:
-  - Singleplayer (against Bots)
-  - Multiplayer
 
 ## Plans for the future
-Build an Desktop application and or an app (iOS and Android) to play poker on your deserved device (Electron, NativeScript, React Native, Proton Native).
+Build cross platform desktop application with Electron JS.
