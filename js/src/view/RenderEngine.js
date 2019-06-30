@@ -1,22 +1,36 @@
 import CardSymbol from './CardSymbol.js';
 import CardText from './CardText.js';
-import {colorFromSuit,textFromValue,COLOR} from '../model/Utils.js';
+import {colorFromSuit,textFromValue,COLOR,BACKSIDE_SVG} from '../model/Utils.js';
 
 export default class RenderEngine {
   constructor(ctx) {
     this.ctx = ctx;
+
+    this.placeBacksideImage();
+    this.cardBack;
   }
 
-  static renderChip(chip) {
+  placeBacksideImage() {
+    let
+      img = document.createElement('img'),
+      svg64 = btoa(BACKSIDE_SVG),
+      b64Start = 'data:image/svg+xml;base64,',
+      image64 = b64Start + svg64;
+
+    img.src = image64;
+
+    this.cardBack = img;
+    // draw the image onto the canvas
+    //canvas.getContext('2d').drawImage(img, 0, 0);
+  }
+
+  renderChip({x,y,color,rotation}) {
     let
       ctx = this.ctx,
-      x = chip.x,
-      y = chip.y,
-      radius = ctx.canvas.width * .4 * .03,
-      rotation = chip.rotation;
-
+      radius = ctx.canvas.width * .4 * .03;
+    color = color || COLOR.red;
     ctx.save();
-    ctx.fillStyle = chip.color;
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.closePath();
@@ -40,7 +54,7 @@ export default class RenderEngine {
     ctx.save();
     ctx.strokeStyle = COLOR.white;
     ctx.lineWidth = radius * .1;
-    ctx.fillStyle = chip.color;
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x, y, radius * .8, 0, Math.PI * 2);
     ctx.closePath();
@@ -51,6 +65,10 @@ export default class RenderEngine {
     ctx.closePath();
     ctx.stroke();
     ctx.restore();
+  }
+  // TODO
+  renderActionChip() {
+
   }
 
   renderCard(card) {
@@ -130,16 +148,12 @@ export default class RenderEngine {
 
     this.renderBlankCard(card);
 
-    // only prototpye here
-    /*
-    const image = document.getElementById('source');
+    ctx.drawImage(this.cardBack, card.x-halfWidth, card.y-halfHeight, width,height);
 
-    ctx.drawImage(image, card.x-halfWidth, card.y-halfHeight, width,height);
-    */
     ctx.restore();
   }
 
-  renderBlankCard(card) {
+  renderDeckShadow({x,y},color) {
     let
       ctx = this.ctx,
       height = (ctx.canvas.width * .4) * .15,
@@ -147,8 +161,60 @@ export default class RenderEngine {
       halfWidth = width * .5,
       halfHeight = height * .5,
       cornerRadius = .06 * width;
+    color = color || '#fff';
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(
+      x - halfWidth + cornerRadius,
+      y - halfHeight,
+      cornerRadius,
+      Math.PI,
+      Math.PI * 1.5
+    );
+    ctx.arc(
+      x + halfWidth - cornerRadius,
+      y - halfHeight,
+      cornerRadius,
+      Math.PI * 1.5,
+      Math.PI * 1.75
+    );
+    ctx.lineTo(
+      x + halfWidth + cornerRadius * 2,
+      y - halfHeight + cornerRadius * 2
+    );
+    ctx.arc(
+      x + halfWidth + cornerRadius,
+      y + halfHeight + cornerRadius  * 2,
+      cornerRadius,
+      0,
+      Math.PI * .5
+    );
+    ctx.lineTo(
+      x - halfWidth + cornerRadius * 2,
+      y + halfHeight + cornerRadius * 3
+    );
+    ctx.arc(
+      x - halfWidth + cornerRadius,
+      y + halfHeight,
+      cornerRadius,
+      Math.PI * 0.75,
+      Math.PI
+    );
+    ctx.closePath();
+    ctx.fill();
 
-    ctx.fillStyle = '#fff';
+  }
+
+  renderBlankCard(card,color) {
+    let
+      ctx = this.ctx,
+      height = (ctx.canvas.width * .4) * .15,
+      width = height * .77,
+      halfWidth = width * .5,
+      halfHeight = height * .5,
+      cornerRadius = .06 * width;
+    color = color || '#fff';
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(
       card.x - halfWidth + cornerRadius,
@@ -186,6 +252,12 @@ export default class RenderEngine {
     this.renderTablePlate();
     this.renderTableBorder();
     this.renderCCBorder();
+    this.renderPotSizeBorder();
+    this.renderChip({
+      x: this.ctx.canvas.width * .5 - (this.ctx.canvas.width * .4) * .16,
+      y: this.ctx.canvas.height * .5 - (this.ctx.canvas.width * .4) * .16,
+      color: COLOR.black
+    })
   }
 
   renderTablePlate() {
@@ -254,16 +326,22 @@ export default class RenderEngine {
       halfCanvasHeight - halfTableHeight
     );
     ctx.arc(
-      halfCanvasWidth + halfTableHeight, halfCanvasHeight,
-      halfTableHeight, Math.PI * 1.5, Math.PI * .5
+      halfCanvasWidth + halfTableHeight,
+      halfCanvasHeight,
+      halfTableHeight,
+      Math.PI * 1.5,
+      Math.PI * .5
     );
     ctx.lineTo(
       halfCanvasWidth - halfTableHeight,
       halfCanvasHeight + halfTableHeight
     );
     ctx.arc(
-      halfCanvasWidth - halfTableHeight, halfCanvasHeight,
-      halfTableHeight, Math.PI * .5, Math.PI * 1.5
+      halfCanvasWidth - halfTableHeight,
+      halfCanvasHeight,
+      halfTableHeight,
+      Math.PI * .5,
+      Math.PI * 1.5
     );
     ctx.stroke();
     ctx.strokeStyle = COLOR.brown2;
@@ -279,7 +357,10 @@ export default class RenderEngine {
     );
     ctx.arc(
       halfCanvasWidth + halfTableHeight,
-      halfCanvasHeight, halfTableHeight, Math.PI * 1.5, Math.PI * .5
+      halfCanvasHeight,
+      halfTableHeight,
+      Math.PI * 1.5,
+      Math.PI * .5
     );
     ctx.lineTo(
       halfCanvasWidth - halfTableHeight,
@@ -287,7 +368,10 @@ export default class RenderEngine {
     );
     ctx.arc(
       halfCanvasWidth - halfTableHeight,
-      halfCanvasHeight, halfTableHeight, Math.PI * .5, Math.PI * 1.5
+      halfCanvasHeight,
+      halfTableHeight,
+      Math.PI * .5,
+      Math.PI * 1.5
     );
     ctx.stroke();
   }
@@ -324,6 +408,40 @@ export default class RenderEngine {
     ctx.arc(
       (halfCanvasWidth - halfWidth) + radius, (halfCanvasHeight + halfHeight),
       radius, Math.PI * .5, Math.PI
+    );
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  renderPotSizeBorder() {
+    let
+      ctx = this.ctx,
+      halfCanvasWidth = ctx.canvas.width * .5,
+      halfCanvasHeight = ctx.canvas.height * .5,
+      height = (ctx.canvas.width * .4) * 0,
+      heightPos = (ctx.canvas.width * .4) * .08,
+      width = (ctx.canvas.width * .4) * .4,
+      radius = width * .1,
+      halfWidth = width * .5,
+      halfHeight = height * .5,
+      strokeWidth = width * .01;
+
+    ctx.save();
+
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = strokeWidth;
+    ctx.beginPath();
+    ctx.arc(
+      halfCanvasWidth - halfWidth + radius,
+      halfCanvasHeight - heightPos * 2,
+      radius, Math.PI * .5, Math.PI * 1.5
+    );
+    ctx.arc(
+      halfCanvasWidth + halfWidth - radius,
+      halfCanvasHeight - heightPos * 2,
+      radius, Math.PI * 1.5, Math.PI * .5
     );
     ctx.closePath();
     ctx.stroke();
