@@ -6,6 +6,8 @@ export default class Card extends GameObject {
     this.suit = suit;
     this.value = value;
     this.isFace = false;
+
+    this.flipAfter = false;
   }
 
   flip() {
