@@ -272,7 +272,20 @@ export const SVG_DATA = {
 
 export const KEY = {
   C: 67,
-  F: 70
+  F: 70,
+  UP: 38,
+  DOWN: 40,
+}
+
+export const numDots = (num) => {
+  return num.toString().split("").reverse().reduce((a,c,i) => {
+    if(i % 3 === 0 && i != 0) {
+      a = c + '.' + a;
+    } else {
+      a = c + a;
+    }
+    return a;
+  },'');
 }
 
 export let round = x => ~~(x + 0.5);
