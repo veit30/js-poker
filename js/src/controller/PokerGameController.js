@@ -1,10 +1,14 @@
 import RenderEngine from '../view/RenderEngine.js';
+import TableRenderEngine from '../view/TableRenderEngine.js'
+import GameRenderEngine from '../view/GameRenderEngine.js'
+import InputLayerRenderEngine from '../view/InputLayerRenderEngine.js'
 import Card from '../model/Card.js';
 import Player from '../model/Player.js';
 import GameObjectController from './GameObjectController.js';
 import InputHandler from './InputHandler.js';
+import Text from '../model/Text.js'
 import {
-  COLOR,CARD_SUIT,CARD_VALUE,KEY,
+  COLOR,CARD_SUIT,CARD_VALUE,KEY,FONT,
   communityCardPosition, playersCardRotation, playersCardPosition
 } from '../model/Utils.js';
 // controller for poker game
@@ -22,17 +26,23 @@ export default class PokerGameController {
     this.inputCanvas;
     this.game = {
       round: 0,
+      state: 'menu'
     };
+    this.buttons = [];
 
+    this.inputHandler = new InputHandler();
     this.setupCanvas();
-    this.tableView = new RenderEngine(this.tableCanvas.getContext('2d'));
-    this.gameView = new RenderEngine(this.gameCanvas.getContext('2d'));
+    this.tableView = new TableRenderEngine(this.tableCanvas.getContext('2d'));
+    this.gameView = new GameRenderEngine(this.gameCanvas.getContext('2d'));
+    this.inputView = new InputLayerRenderEngine(
+      this.inputCanvas.getContext('2d'),
+      this.inputHandler
+    );
     this.objectController = new GameObjectController(this.gameCanvas.getContext('2d'));
     this.addResizeListener();
     this.tableView.renderBackground(COLOR.lightGray);
     this.tableView.renderTable();
 
-    this.inputHandler = new InputHandler();
   }
 
   addResizeListener() {
@@ -53,6 +63,7 @@ export default class PokerGameController {
       this.tableView.renderBackground(COLOR.lightGray);
       this.tableView.renderTable();
       this.objectController.windowResized = true;
+      this.inputView.reset();
       this.start();
     });
   }
@@ -158,14 +169,25 @@ export default class PokerGameController {
 
   // basic game loop function
   start() {
-
-    if (this.inputHandler.askKeyPress(KEY.C)) {
-      this.flopTurnRiver();
-      this.game.round++;
+    if(this.game.state === 'menu') {
+      this.inputView.renderMenu();
+      if (this.inputView.state === 'ingame') {
+        this.game.state = 'ingame';
+        this.inputView.clear();
+      }
+    } else if (this.game.state === 'ingame') {
+      if (this.inputHandler.askKeyPress(KEY.C)) {
+        this.flopTurnRiver();
+        this.game.round++;
+      }
+      this.inputView.renderText(
+        this.inputCanvas.width * .5,
+        this.inputCanvas.height *.5 - this.inputCanvas.width * .032,
+        new Text('400',this.inputCanvas.width * .03,FONT.MAIN)
+      );
+      this.updateGameObjects();
+      this.renderGameObjects();
     }
-
-    this.updateGameObjects();
-    this.renderGameObjects();
     this.raf = requestAnimationFrame(() => this.start());
   }
 
