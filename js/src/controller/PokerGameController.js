@@ -9,7 +9,7 @@ import InputHandler from './InputHandler.js';
 import Text from '../model/Text.js'
 import {
   COLOR,CARD_SUIT,CARD_VALUE,KEY,FONT,
-  communityCardPosition, playersCardRotation, playersCardPosition
+  communityCardPosition, playersCardRotation, playersCardPosition,numDots
 } from '../model/Utils.js';
 // controller for poker game
 export default class PokerGameController {
@@ -26,7 +26,9 @@ export default class PokerGameController {
     this.inputCanvas;
     this.game = {
       round: 0,
-      state: 'menu'
+      state: 'menu',
+      pot: 10000,
+      potChanged: true
     };
     this.buttons = [];
 
@@ -64,6 +66,7 @@ export default class PokerGameController {
       this.tableView.renderTable();
       this.objectController.windowResized = true;
       this.inputView.reset();
+      this.game.potChanged = true;
       this.start();
     });
   }
@@ -169,25 +172,37 @@ export default class PokerGameController {
 
   // basic game loop function
   start() {
-    if(this.game.state === 'menu') {
-      this.inputView.renderMenu();
-      if (this.inputView.state === 'ingame') {
-        this.game.state = 'ingame';
-        this.inputView.clear();
-      }
-    } else if (this.game.state === 'ingame') {
+    this.inputView.renderMenu();
+    this.game.state = this.inputView.state;
+    if (this.game.state === 'ingame') {
       if (this.inputHandler.askKeyPress(KEY.C)) {
         this.flopTurnRiver();
         this.game.round++;
       }
-      this.inputView.renderText(
-        this.inputCanvas.width * .5,
-        this.inputCanvas.height *.5 - this.inputCanvas.width * .032,
-        new Text('400',this.inputCanvas.width * .03,FONT.MAIN)
-      );
-      this.updateGameObjects();
-      this.renderGameObjects();
+      if (this.inputHandler.askKeyPress(KEY.UP)) {
+        this.game.pot++;
+        this.game.potChanged = true;
+      }
+      if (this.inputHandler.askKeyPress(KEY.DOWN)) {
+        this.game.pot--;
+        this.game.potChanged = true;
+      }
+      if (this.game.potChanged) {
+        this.tableView.renderTable();
+        let potTextStr = numDots(this.game.pot);
+        let potText = new Text(numDots(this.game.pot),this.inputCanvas.width * .03,FONT.MAIN,undefined,undefined,'left');
+        let width = potText.calcWidth(this.tableCanvas.getContext('2d'));
+        this.tableView.renderText(
+          this.inputCanvas.width * .5 + ((this.inputCanvas.width * .08) - width * 1.1),
+          this.inputCanvas.height *.5 - this.inputCanvas.width * .054,
+          potText
+        );
+        this.game.potChanged = false;
+      }
     }
+
+    this.updateGameObjects();
+    this.renderGameObjects();
     this.raf = requestAnimationFrame(() => this.start());
   }
 
