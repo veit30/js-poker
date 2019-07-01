@@ -16,4 +16,13 @@ export default class RenderEngine {
     this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
+  renderText(x,y,text) {
+    let ctx = this.ctx;
+    ctx.save();
+    ctx.font = text.format;
+    ctx.textAlign = text.alignment;
+    ctx.fillStyle = text.color;
+    ctx.fillText(text.text, x, y);
+    ctx.restore();
+  }
 }
