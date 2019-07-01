@@ -58,11 +58,6 @@ export default class InputLayerRenderEngine extends RenderEngine {
 
   renderMenu() {
     this.pointing = false;
-    this.buttons.forEach(b => {
-      if (b.text === 'Start game' && b.clicked) {
-        this.state = 'ingame';
-      }
-    })
 
     if (this.state === 'menu') {
       this.renderBackground(COLOR.darkGrey);
@@ -73,13 +68,18 @@ export default class InputLayerRenderEngine extends RenderEngine {
           this.renderIconButton(b);
         }
       })
-      if (this.pointing) {
-        this.ctx.canvas.style.cursor = 'pointer';
-      } else {
-        this.ctx.canvas.style.cursor = 'auto';
-      }
     } else if (this.state === 'ingame') {
       this.clear();
+      this.buttons.forEach(b => {
+        if (b.constructor.name === 'IconButton') {
+          this.renderIconButton(b);
+        }
+      })
+    }
+    if (this.pointing) {
+      this.ctx.canvas.style.cursor = 'pointer';
+    } else {
+      this.ctx.canvas.style.cursor = 'auto';
     }
   }
 
@@ -156,15 +156,6 @@ export default class InputLayerRenderEngine extends RenderEngine {
 
     ctx.restore();
 
-  }
-
-  renderText(x,y,text) {
-    let ctx = this.ctx;
-    ctx.save();
-    ctx.font = text.format;
-    ctx.textAlign = "center";
-    ctx.fillStyle = COLOR.black;
-    ctx.fillText(text.text, x, y);
   }
 
 }
