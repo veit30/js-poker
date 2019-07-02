@@ -8,7 +8,6 @@ export default class Text {
     this.weight = weight || 'normal';
     this.color = color || COLOR.black;
     this.alignment = alignment || 'center';
-    console.log(size);
   }
 
   calcWidth(ctx) {
