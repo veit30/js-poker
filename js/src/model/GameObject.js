@@ -26,5 +26,7 @@ export default class GameObject {
     this.delay = 0;
     this.isInitialized = false;
     this.isRunning = false;
+
+    this.doneMoves = 0;
   }
 }
