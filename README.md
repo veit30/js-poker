@@ -12,15 +12,13 @@ Poker with HTML5 Canvas and JavaScript.
 
 ## Planned
 - finalize card back (almost done)
-- Error handling
-- Tests
-- User Inputs (already started)
-- Server client implementation to play in local network
-- Game flow control:
+- error handling
+- tests
+- user Inputs (already started)
+- server client implementation to play in local network
+- game flow control:
   - start screen and menu
   - (avatars; can be quite funny for multiplayer)
   - poker functionality (calling, passing, raising, checking, etc.)
 - more customizing control for Cards, Chips, Table and more
-
-## Plans for the future
-Build cross platform desktop application with Electron JS.
+- build cross platform desktop application with Electron JS
