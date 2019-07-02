@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/vs1998/js-poker#readme",
   "devDependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5"
   }
