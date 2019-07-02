@@ -7,6 +7,9 @@ export default class GameObjectController {
   }
 
   update(obj) {
+    if (Object.keys(obj.posQuotient).length === 0) {
+      this.calcRelPosProp(obj);
+    }
     this.applyMove(obj);
     this.updateTimer(obj);
     if(obj.isInitialized && obj.delay === 0) {
@@ -27,6 +30,7 @@ export default class GameObjectController {
         obj.isInitialized = false;
         obj.isRunning = false;
         obj.flipAfter && obj.flip();
+        obj.doneMoves++;
       } else {
         obj.x = this.ctx.canvas.width * .5 + tableHeight * obj.posQuotient.x;
         obj.y = this.ctx.canvas.height * .5 + tableHeight * obj.posQuotient.y;
@@ -53,9 +57,10 @@ export default class GameObjectController {
       obj.posQuotient.x = obj.endPosQuotient.x;
       obj.posQuotient.y = obj.endPosQuotient.y;
       obj.rotation = obj.startRotation + obj.rotationLen;
-      // this.calcRelPosProp(obj);
       obj.isRunning = false;
       obj.flipAfter && obj.flip();
+
+      obj.doneMoves++;
     }
   }
 
