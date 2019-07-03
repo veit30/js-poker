@@ -1,8 +1,7 @@
-import CardSymbol from './CardSymbol.js';
-import CardText from './CardText.js';
-import {colorFromSuit,textFromValue,COLOR} from '../model/Utils.js';
+const CardSymbol = require('./CardSymbol.js');
+const CardText = require('./CardText.js');
 
-export default class RenderEngine {
+class RenderEngine {
   constructor(ctx) {
     this.ctx = ctx;
   }
@@ -26,3 +25,5 @@ export default class RenderEngine {
     ctx.restore();
   }
 }
+
+module.exports = RenderEngine;

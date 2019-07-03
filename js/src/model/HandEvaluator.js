@@ -170,6 +170,8 @@ class HandEvaluator {
 
 }
 
+module.exports = HandEvaluator;
+
 let testObj = {
   players: [
     {

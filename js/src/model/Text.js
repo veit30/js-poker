@@ -1,6 +1,6 @@
-import {COLOR} from './Utils.js';
+const COLOR = require('./Utils.js').COLOR;
 
-export default class Text {
+class Text {
   constructor(text, size, font, weight, color, alignment) {
     this.text = text;
     this.font = font;
@@ -23,3 +23,5 @@ export default class Text {
   }
 
 }
+
+module.exports = Text;

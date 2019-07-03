@@ -1,4 +1,4 @@
-export default class Button {
+class Button {
   constructor(x,y,height,width,color) {
     this.x = x;
     this.y = y;
@@ -16,3 +16,5 @@ export default class Button {
     return false;
   }
 }
+
+module.exports = Button;

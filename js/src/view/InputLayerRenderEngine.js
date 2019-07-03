@@ -1,9 +1,12 @@
-import RenderEngine from './RenderEngine.js';
-import TextButton from '../model/TextButton.js';
-import IconButton from '../model/IconButton.js';
-import {COLOR,SVG_DATA,FONT} from '../model/Utils.js';
+const RenderEngine = require('./RenderEngine.js');
+const TextButton = require('../model/TextButton.js');
+const IconButton = require('../model/IconButton.js');
+const COLOR = require('../model/Utils.js').COLOR;
+const FONT = require('../model/Utils.js').FONT;
+const SVG_DATA = require('../model/Utils.js').SVG_DATA;
 
-export default class InputLayerRenderEngine extends RenderEngine {
+
+class InputLayerRenderEngine extends RenderEngine {
   constructor(ctx,inputHandler) {
     super(ctx)
 
@@ -159,3 +162,5 @@ export default class InputLayerRenderEngine extends RenderEngine {
   }
 
 }
+
+module.exports = InputLayerRenderEngine;

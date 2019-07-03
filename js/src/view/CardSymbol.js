@@ -1,6 +1,6 @@
-import {COLOR} from '../model/Utils.js';
+const COLOR = require('../model/Utils.js').COLOR;
 
-export default class CardSymbol {
+class CardSymbol {
 
   static render(x,y,rotation,scale,suit,ctx) {
     switch(suit) {
@@ -84,3 +84,5 @@ export default class CardSymbol {
     ctx.restore();
   }
 }
+
+module.exports = CardSymbol;

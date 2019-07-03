@@ -1,18 +1,24 @@
-import RenderEngine from '../view/RenderEngine.js';
-import TableRenderEngine from '../view/TableRenderEngine.js'
-import GameRenderEngine from '../view/GameRenderEngine.js'
-import InputLayerRenderEngine from '../view/InputLayerRenderEngine.js'
-import Card from '../model/Card.js';
-import Player from '../model/Player.js';
-import GameObjectController from './GameObjectController.js';
-import InputHandler from './InputHandler.js';
-import Text from '../model/Text.js'
-import {
-  COLOR,CARD_SUIT,CARD_VALUE,KEY,FONT,
-  communityCardPosition, playersCardRotation, playersCardPosition,numDots
-} from '../model/Utils.js';
+const RenderEngine = require('../view/RenderEngine.js');
+const TableRenderEngine = require('../view/TableRenderEngine.js');
+const GameRenderEngine = require('../view/GameRenderEngine.js');
+const InputLayerRenderEngine = require('../view/InputLayerRenderEngine.js');
+const Card = require('../model/Card.js');
+const Player = require('../model/Player.js');
+const GameObjectController = require('./GameObjectController.js');
+const InputHandler = require('./InputHandler.js');
+const Text = require('../model/Text.js');
+const COLOR = require('../model/Utils.js').COLOR;
+const CARD_SUIT = require('../model/Utils.js').CARD_SUIT;
+const CARD_VALUE = require('../model/Utils.js').CARD_VALUE;
+const KEY = require('../model/Utils.js').KEY;
+const FONT = require('../model/Utils.js').FONT;
+const communityCardPosition = require('../model/Utils.js').communityCardPosition;
+const playersCardRotation = require('../model/Utils.js').playersCardRotation;
+const playersCardPosition = require('../model/Utils.js').playersCardPosition;
+const numDots = require('../model/Utils.js').numDots;
+
 // controller for poker game
-export default class PokerGameController {
+class PokerGameController {
   // maybe as player json?
   constructor(options) {
 
@@ -235,3 +241,5 @@ export default class PokerGameController {
 
   }
 }
+
+module.exports = PokerGameController;

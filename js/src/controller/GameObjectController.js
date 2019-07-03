@@ -1,6 +1,8 @@
-import {POS_QUOTIENT_CALC,EASING_FUNCTION,rT} from '../model/Utils.js';
+const POS_QUOTIENT_CALC = require('../model/Utils.js').POS_QUOTIENT_CALC;
+const EASING_FUNCTION = require('../model/Utils.js').EASING_FUNCTION;
+const rT = require('../model/Utils.js').rT;
 
-export default class GameObjectController {
+class GameObjectController {
   constructor(ctx) {
     this.ctx = ctx;
     this.windowResized = false;
@@ -132,3 +134,5 @@ export default class GameObjectController {
   }
 
 }
+
+module.exports = GameObjectController;

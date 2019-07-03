@@ -290,3 +290,24 @@ export const numDots = (num) => {
 
 export let round = x => ~~(x + 0.5);
 export let rT = x => ~~(x*1000 + 0.5) / 1000;
+
+// module exports here
+
+module.exports.COLOR = COLOR;
+module.exports.CARD_SUIT = CARD_SUIT;
+module.exports.CARD_VALUE = CARD_VALUE;
+module.exports.FONT = FONT;
+module.exports.colorFromSuit = colorFromSuit;
+module.exports.textFromValue = textFromValue;
+module.exports.PLAYER_POSITION = PLAYER_POSITION;
+module.exports.playersCardRotation = playersCardRotation;
+module.exports.playersCardPosition = playersCardPosition;
+module.exports.communityCardPosition = communityCardPosition;
+module.exports.EASING_FUNCTION = EASING_FUNCTION;
+module.exports.POS_QUOTIENT_CALC = POS_QUOTIENT_CALC;
+module.exports.convertToImg = convertToImg;
+module.exports.SVG_DATA = SVG_DATA;
+module.exports.KEY = KEY;
+module.exports.numDots = numDots;
+module.exports.round = round;
+module.exports.rT = rT;

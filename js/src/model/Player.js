@@ -1,8 +1,5 @@
-let globalId = 0;
-let nextId = () => {return globalId++;}
-let resetId = () => {globalId = 0;}
 
-export default class Player {
+class Player {
   constructor(name, positionId, clientId) {
     this.name = name;
     this.positionId = positionId;
@@ -15,3 +12,5 @@ export default class Player {
     return this.chips.reduce((a,c) => {return a + c.value;},0);
   }
 }
+
+module.exports = Player;

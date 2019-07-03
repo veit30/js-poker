@@ -1,6 +1,8 @@
-import {CARD_VALUE,CARD_SUIT,numDots} from './Utils.js';
+const CARD_VALUE = require('./Utils.js').CARD_VALUE;
+const CARD_SUIT = require('./Utils.js').CARD_SUIT;
+const numDots = require('./Utils.js').numDots;
 
-export default class Game {
+class Game {
   constructor(canvas) {
     this.deck = [];
     this.players = [];
@@ -83,3 +85,5 @@ export default class Game {
   }
 
 }
+
+module.exports = Game;
