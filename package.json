@@ -4,6 +4,7 @@
   "description": "Poker with HTML5 Canvas and vanilla JavaScript",
   "main": "index.js",
   "scripts": {
+    "start": "electron .",
     "build": "webpack --config webpack.config.js"
   },
   "repository": {
