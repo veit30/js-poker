@@ -7,18 +7,15 @@ const Player = require('../model/Player.js');
 const GameObjectController = require('./GameObjectController.js');
 const InputHandler = require('./InputHandler.js');
 const Text = require('../model/Text.js');
-const COLOR = require('../model/Utils.js').COLOR;
-const CARD_SUIT = require('../model/Utils.js').CARD_SUIT;
-const CARD_VALUE = require('../model/Utils.js').CARD_VALUE;
-const KEY = require('../model/Utils.js').KEY;
-const FONT = require('../model/Utils.js').FONT;
-const communityCardPosition = require('../model/Utils.js').communityCardPosition;
-const playersCardRotation = require('../model/Utils.js').playersCardRotation;
-const playersCardPosition = require('../model/Utils.js').playersCardPosition;
-const numDots = require('../model/Utils.js').numDots;
+const Game = require('../model/Game.js');
+const {
+  COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
+  playersCardPosition
+} = require('../model/Utils.js');
+
 
 // controller for poker game
-class PokerGameController {
+module.exports = class PokerGameController {
   // maybe as player json?
   constructor(options) {
 
@@ -88,13 +85,13 @@ class PokerGameController {
 
   renderGameObjects() {
     let gameObjects = [];
-    for (let player of this.players) {
+    for (let player of this.game.players) {
       gameObjects = gameObjects.concat(player.cards);
     }
     gameObjects = gameObjects
-      .concat([this.cards[0]])
-      .concat(this.chips)
-      .concat(this.communityCards);
+      .concat([this.game.deck[0]])
+      // .concat(this.game.chips)
+      .concat(this.game.communityCards);
     this.gameView.clear();
     this.gameView.renderDeckShadow(
       {
@@ -113,13 +110,13 @@ class PokerGameController {
 
   updateGameObjects() {
     let gameObjects = [];
-    for (let player of this.players) {
+    for (let player of this.game.players) {
       gameObjects = gameObjects.concat(player.cards);
     }
     gameObjects = gameObjects
-      .concat(this.cards)
-      .concat(this.chips)
-      .concat(this.communityCards);
+      .concat(this.game.deck)
+      //.concat(this.game.chips)
+      .concat(this.game.communityCards);
     for (let go of gameObjects) {
       this.objectController.update(go);
     }
@@ -136,6 +133,8 @@ class PokerGameController {
     this.game.addPlayer(new Player('Ive',6,908732))
     this.game.addPlayer(new Player('Holg',7,932874))
     this.game.startNewGame();
+    this.movePlayerCards();
+    this.initGameObjects();
   }
 
   // basic game loop function
@@ -160,11 +159,18 @@ class PokerGameController {
         this.displayPotSize();
         this.game.noticedPotSize();
       }
+      this.updateGameObjects();
+      this.renderGameObjects();
     }
-
-    this.updateGameObjects();
-    this.renderGameObjects();
     this.raf = requestAnimationFrame(() => this.start());
+  }
+
+  initGameObjects() {
+    this.collectGameObjects();
+  }
+
+  collectGameObjects() {
+    
   }
 
   displayPotSize() {
@@ -214,6 +220,8 @@ class PokerGameController {
         delay += 500;
       })
     }
+
+
   }
 
   stop() {
@@ -241,5 +249,3 @@ class PokerGameController {
 
   }
 }
-
-module.exports = PokerGameController;

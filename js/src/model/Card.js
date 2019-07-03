@@ -1,6 +1,6 @@
 const GameObject = require('./GameObject.js');
 
-class Card extends GameObject {
+module.exports = class Card extends GameObject {
   constructor(x, y, rotation, suit, value) {
     super(x, y, rotation)
     this.suit = suit;
@@ -15,5 +15,3 @@ class Card extends GameObject {
   }
 
 }
-
-module.exports = Card;

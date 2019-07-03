@@ -1,12 +1,9 @@
 const RenderEngine = require('./RenderEngine.js');
 const TextButton = require('../model/TextButton.js');
 const IconButton = require('../model/IconButton.js');
-const COLOR = require('../model/Utils.js').COLOR;
-const FONT = require('../model/Utils.js').FONT;
-const SVG_DATA = require('../model/Utils.js').SVG_DATA;
+const {COLOR, FONT, SVG_DATA} = require('../model/Utils.js');
 
-
-class InputLayerRenderEngine extends RenderEngine {
+module.exports = class InputLayerRenderEngine extends RenderEngine {
   constructor(ctx,inputHandler) {
     super(ctx)
 
@@ -162,5 +159,3 @@ class InputLayerRenderEngine extends RenderEngine {
   }
 
 }
-
-module.exports = InputLayerRenderEngine;

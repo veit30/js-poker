@@ -1,7 +1,7 @@
 const RenderEngine = require('./RenderEngine.js');
-const = COLOR = require('../model/Utils.js').COLOR;
+const COLOR = require('../model/Utils.js').COLOR;
 
-class TableRenderEngine extends RenderEngine {
+module.exports = class TableRenderEngine extends RenderEngine {
   constructor(ctx) {
     super(ctx)
   }
@@ -251,5 +251,3 @@ class TableRenderEngine extends RenderEngine {
     ctx.restore();
   }
 }
-
-module.exports = TableRenderEngine;

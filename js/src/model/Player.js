@@ -1,5 +1,4 @@
-
-class Player {
+module.exports = class Player {
   constructor(name, positionId, clientId) {
     this.name = name;
     this.positionId = positionId;
@@ -12,5 +11,3 @@ class Player {
     return this.chips.reduce((a,c) => {return a + c.value;},0);
   }
 }
-
-module.exports = Player;

@@ -1,4 +1,4 @@
-class Button {
+module.exports = class Button {
   constructor(x,y,height,width,color) {
     this.x = x;
     this.y = y;
@@ -16,5 +16,3 @@ class Button {
     return false;
   }
 }
-
-module.exports = Button;

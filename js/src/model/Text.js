@@ -1,6 +1,6 @@
 const COLOR = require('./Utils.js').COLOR;
 
-class Text {
+module.exports = class Text {
   constructor(text, size, font, weight, color, alignment) {
     this.text = text;
     this.font = font;
@@ -23,5 +23,3 @@ class Text {
   }
 
 }
-
-module.exports = Text;

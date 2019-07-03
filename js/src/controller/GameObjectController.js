@@ -1,8 +1,6 @@
-const POS_QUOTIENT_CALC = require('../model/Utils.js').POS_QUOTIENT_CALC;
-const EASING_FUNCTION = require('../model/Utils.js').EASING_FUNCTION;
-const rT = require('../model/Utils.js').rT;
+const {POS_QUOTIENT_CALC, EASING_FUNCTION, rT} = require('../model/Utils.js');
 
-class GameObjectController {
+module.exports = class GameObjectController {
   constructor(ctx) {
     this.ctx = ctx;
     this.windowResized = false;
@@ -134,5 +132,3 @@ class GameObjectController {
   }
 
 }
-
-module.exports = GameObjectController;

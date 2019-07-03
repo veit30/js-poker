@@ -1,7 +1,4 @@
-const CardSymbol = require('./CardSymbol.js');
-const CardText = require('./CardText.js');
-
-class RenderEngine {
+module.exports = class RenderEngine {
   constructor(ctx) {
     this.ctx = ctx;
   }
@@ -25,5 +22,3 @@ class RenderEngine {
     ctx.restore();
   }
 }
-
-module.exports = RenderEngine;

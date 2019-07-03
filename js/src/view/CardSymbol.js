@@ -1,6 +1,6 @@
 const COLOR = require('../model/Utils.js').COLOR;
 
-class CardSymbol {
+module.exports = class CardSymbol {
 
   static render(x,y,rotation,scale,suit,ctx) {
     switch(suit) {
@@ -84,5 +84,3 @@ class CardSymbol {
     ctx.restore();
   }
 }
-
-module.exports = CardSymbol;

@@ -1,4 +1,4 @@
-class InputHandler {
+module.exports = class InputHandler {
   constructor() {
     this.pressed = {};
     this.cursor = {
@@ -51,5 +51,3 @@ class InputHandler {
   }
 
 }
-
-module.exports = InputHandler;

@@ -1,4 +1,4 @@
-class CardText {
+module.exports = class CardText {
   static render(x,y,size,text,color,ctx) {
     ctx.save();
     ctx.fillStyle = color;
@@ -8,5 +8,3 @@ class CardText {
     ctx.restore();
   }
 }
-
-module.exports = CardText;

@@ -1,7 +1,6 @@
-const POS_QUOTIENT_CALC = require('./Utils.js').POS_QUOTIENT_CALC;
-const EASING_FUNCTION = require('./Utils.js').EASING_FUNCTION;
+const {POS_QUOTIENT_CALC, EASING_FUNCTION} = require('./Utils.js');
 
-class GameObject {
+module.exports = class GameObject {
   constructor(x, y, rotation) {
     this.x = x;
     this.y = y;
@@ -31,5 +30,3 @@ class GameObject {
     this.doneMoves = 0;
   }
 }
-
-module.exports = GameObject;

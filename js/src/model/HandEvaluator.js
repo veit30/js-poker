@@ -1,4 +1,4 @@
-class HandEvaluator {
+module.exports = class HandEvaluator {
   static RESULTS() {
     return [
     'high-card',
@@ -169,8 +169,6 @@ class HandEvaluator {
   }
 
 }
-
-module.exports = HandEvaluator;
 
 let testObj = {
   players: [

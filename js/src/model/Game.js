@@ -1,8 +1,7 @@
-const CARD_VALUE = require('./Utils.js').CARD_VALUE;
-const CARD_SUIT = require('./Utils.js').CARD_SUIT;
-const numDots = require('./Utils.js').numDots;
+const {CARD_VALUE, CARD_SUIT, numDots} = require('./Utils.js');
+const Card = require('./Card.js');
 
-class Game {
+module.exports = class Game {
   constructor(canvas) {
     this.deck = [];
     this.players = [];
@@ -18,7 +17,7 @@ class Game {
     this.generateDeck();
     this.shuffleDeck();
     this.dealPlayercards();
-    this.game.state = 'new';
+    this.state = 'new';
   }
 
   generateDeck() {
@@ -61,7 +60,7 @@ class Game {
   }
 
   dealPlayercards() {
-    this.game.players.map(p => {
+    this.players.map(p => {
       p.cards.push(this.deck.pop());
       p.cards.push(this.deck.pop());
       return p;
@@ -85,5 +84,3 @@ class Game {
   }
 
 }
-
-module.exports = Game;

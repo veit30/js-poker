@@ -1,13 +1,11 @@
 const RenderEngine = require('./RenderEngine.js');
 const CardSymbol = require('./CardSymbol.js');
 const CardText = require('./CardText.js');
-const COLOR = require('../model/Utils.js').COLOR;
-const SVG_DATA = require('../model/Utils.js').SVG_DATA;
-const colorFromSuit = require('../model/Utils.js').colorFromSuit;
-const textFromValue = require('../model/Utils.js').textFromValue;
-const convertToImg = require('../model/Utils.js').convertToImg;
+const {
+  COLOR,SVG_DATA,colorFromSuit,textFromValue,convertToImg
+} = require('../model/Utils.js');
 
-class GameRenderEngine extends RenderEngine {
+module.exports = class GameRenderEngine extends RenderEngine {
   constructor(ctx) {
     super(ctx)
     this.cardBack = convertToImg(SVG_DATA.backside1);
@@ -237,5 +235,3 @@ class GameRenderEngine extends RenderEngine {
 
   }
 }
-
-module.exports = GameRenderEngine;
