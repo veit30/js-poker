@@ -166,11 +166,21 @@ module.exports = class PokerGameController {
   }
 
   initGameObjects() {
-    this.collectGameObjects();
+    let gameObjecs = this.collectGameObjects();
+    gameObjecs.forEach(g => {
+      this.objectController.calcRelPosProp(g);
+    })
   }
 
   collectGameObjects() {
-    
+    let gameObjects = [];
+    this.game.players.forEach(p => {
+      gameObjects.push(...p.cards);
+      gameObjects.push(...p.chips);
+    });
+    gameObjects.push(...this.game.deck)
+    gameObjects.push(...this.game.communityCards)
+    return gameObjects;
   }
 
   displayPotSize() {
