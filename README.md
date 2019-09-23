@@ -1,6 +1,9 @@
 # js-poker (WIP)
 Poker with HTML5 Canvas and JavaScript.
 
+## Running
+Run application with `npm start`.
+
 ## Current Status
 - simple poker setting rendering:
   - Table

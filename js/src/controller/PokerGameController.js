@@ -24,6 +24,7 @@ module.exports = class PokerGameController {
     this.tableCanvas;
     this.gameCanvas;
     this.inputCanvas;
+    this.inputFields = []
     /*
     this.game = {
       round: 0,

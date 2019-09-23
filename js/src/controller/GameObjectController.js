@@ -129,6 +129,8 @@ module.exports = class GameObjectController {
   calcRelPosProp(obj) {
     obj.posQuotient.x = POS_QUOTIENT_CALC.x(this.ctx,obj.x);
     obj.posQuotient.y = POS_QUOTIENT_CALC.y(this.ctx,obj.y);
+    obj.endPosQuotient.x = POS_QUOTIENT_CALC.x(this.ctx,obj.x);
+    obj.endPosQuotient.y = POS_QUOTIENT_CALC.x(this.ctx,obj.y);
   }
 
 }

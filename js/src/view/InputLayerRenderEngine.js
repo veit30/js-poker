@@ -1,6 +1,9 @@
 const RenderEngine = require('./RenderEngine.js');
 const TextButton = require('../model/TextButton.js');
 const IconButton = require('../model/IconButton.js');
+const InputField = require('../model/InputField.js');
+const AlertBox = require('../model/AlertBox.js');
+const Label = require('../model/Label.js');
 const {COLOR, FONT, SVG_DATA} = require('../model/Utils.js');
 
 module.exports = class InputLayerRenderEngine extends RenderEngine {
@@ -8,154 +11,336 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     super(ctx)
 
     this.inputHandler = inputHandler;
-    this.buttons = []
-    this.reset();
+    this.menuElements = []
     this.state = 'menu';
+    this.reset();
     this.pointing = false;
+    // this.inputFields = {
+    //   host: undefined;
+    //   name: undefined;
+    // }
     // this.updateButtons();
   }
 
-  createTextButtons() {
-    let tb = new TextButton(
-      this.ctx.canvas.width * .5,
-      this.ctx.canvas.height * .5,
-      this.ctx.canvas.width * .05,
-      this.ctx.canvas.width * .25,
-      COLOR.blue,
-      'Start game'
-    );
-
+  addButton(button,callback) {
     this.inputHandler.bindOnClickEvent(ev => {
-      if (tb.intersect({x:ev.x, y:ev.y})) {
-        console.log('Clicked at button');
+      if (button.intersect({x:ev.x, y:ev.y})) {
+        console.log(`Clicked at Button ${button.label}`);
         this.ctx.canvas.style.cursor = 'auto';
-        this.state = 'ingame'
+        callback(this);
       }
-    });
+    }, button.label);
 
-    this.buttons.push(tb);
+    this.menuElements.push(button);
   }
 
-  createIconButtons() {
-    let ib = new IconButton(
-      this.ctx.canvas.width - this.ctx.canvas.width * .035,
-      this.ctx.canvas.width * .035,
-      this.ctx.canvas.width * .05,
-      this.ctx.canvas.width * .05,
-      COLOR.blue,
-      SVG_DATA.gearlock
-    );
-
+  addInputField(inputField,callback) {
     this.inputHandler.bindOnClickEvent(ev => {
-      if (ib.intersect({x:ev.x,y:ev.y})) {
-        console.log('Clicked on gear');
+      if(inputField.intersect({x:ev.x, y:ev.y})) {
+        console.log(`Clicked at InputField: ${inputField.label}`);
+        inputField.focus = true;
         this.ctx.canvas.style.cursor = 'auto';
+        callback(this);
+      } else {
+        inputField.focus = false;
       }
-    })
+    },inputField.label);
 
-    this.buttons.push(ib);
+    this.menuElements.push(inputField);
+  }
+
+  addAlertBox(alertBox,callback) {
+    this.inputHandler.bindOnClickEvent(ev => {
+      if(alertBox.intersect({x:ev.x, y:ev.y})) {
+        console.log(`Clicked at AlertBox: ${alertBox.label}`);
+        this.ctx.canvas.style.cursor = 'auto';
+        callback(this,alertBox);
+      }
+    },alertBox.label);
+
+    this.menuElements.push(alertBox);
   }
 
   renderMenu() {
     this.pointing = false;
-
-    if (this.state === 'menu') {
-      this.renderBackground(COLOR.darkGrey);
-      this.buttons.forEach(b => {
-        if (b.constructor.name === 'TextButton') {
-          this.renderTextButton(b);
-        } else if (b.constructor.name === 'IconButton') {
-          this.renderIconButton(b);
-        }
-      })
-    } else if (this.state === 'ingame') {
-      this.clear();
-      this.buttons.forEach(b => {
-        if (b.constructor.name === 'IconButton') {
-          this.renderIconButton(b);
-        }
-      })
+    let hover = false;
+    switch(this.state) {
+      case 'game-lobby':
+      case 'menu':
+      case 'host-game':
+      case 'join-game': this.renderBackground(COLOR.darkGrey); break;
+      case 'ingame': this.clear();
     }
+
+    this.menuElements.forEach(me => {
+      hover = me.intersect(this.inputHandler.cursor);
+      hover && (this.pointing = true);
+      if (me instanceof InputField && me.focus) {
+        let text = me.text;
+        let key = this.inputHandler.getPressedKey();
+        if (key) {
+          if (key.key === 'Backspace') { // for deleting stuff
+            text = text.slice(0, -1);
+          } else if (key.key.length === 1){ // only single character
+            text += key.key;
+          }
+        }
+        me.text = text;
+      }
+      me.render(this.ctx,hover);
+    })
+
     if (this.pointing) {
       this.ctx.canvas.style.cursor = 'pointer';
     } else {
       this.ctx.canvas.style.cursor = 'auto';
     }
   }
-
+  // need to reset all active buttons;
   reset() {
-    this.buttons = [];
-    this.inputHandler.clickActions = [];
-    this.createTextButtons();
-    this.createIconButtons();
-  }
+    console.log('resetting buttons');
+    ['joinButton','hostButton','hostGameButton','hostInput','playerNameInput'].forEach(b => {
+      this.inputHandler.deleteClickEventBinding(b);
+    })
+    if (this.state === 'menu') {
+      this.loadMenu();
+    } else if (this.state === 'host-game') {
+      this.loadHostMenu();
+    } else if (this.state === 'join-game') {
+      this.loadJoinMenu();
+    } else if (this.state === 'ingame') {
+      this.loadIngameView();
+    } else if (this.state === 'game-lobby') {
+      let empty = false;
+      this.menuElements.forEach(elem => {
+        if (elem instanceof InputField && elem.text === '') {
+          empty = true
+        }
+      })
+      if (empty) {
+        this.state = 'menu';
+        this.loadMenu();
+        this.addAlertBox(new AlertBox(
+          this.ctx.canvas.width * .15,
+          this.ctx.canvas.width * .15,
+          this.ctx.canvas.width * .25,
+          this.ctx.canvas.width * .1,
+          {
+            hover: COLOR.alertRedHover,
+            idle: COLOR.alertRed,
+            text: COLOR.darkGray
+          },
+          'inputAlertBox',
+          'Name or host not set try again!'
+        ),(parent,self) => {
+          parent.inputHandler.deleteClickEventBinding(self.label);
+          parent.menuElements = parent.menuElements.filter(e => {
+            return e.label !== self.label;
+          })
+        });
 
-  renderIconButton(button) {
-    let ctx = this.ctx;
-    ctx.drawImage(
-      button.icon,
-      button.x-button.width * .5,
-      button.y-button.height * .5,
-      button.width,
-      button.height
-    );
-    if (button.intersect(this.inputHandler.cursor)) {
-      ctx.drawImage(
-        button.icon,
-        button.x-button.width * .5,
-        button.y-button.height * .5,
-        button.width,
-        button.height
-      );
-      this.pointing = true;
+      }
     }
   }
 
-  renderTextButton(button) {
-    let
-      ctx = this.ctx,
-      height = button.height,
-      width = button.width,
-      x = button.x,
-      y = button.y,
-      radius = height * .5,
-      strokeWidth = height * .1,
-      fontSize = height * .7;
+  loadHostMenu() {
+    this.menuElements = [];
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 + this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.blue,
+        hover : COLOR.darkerBlue,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'hostGameButton',
+      'Host'
+    ), parent => {
+      parent.state = 'game-lobby';
+      // player is hosting and joining the lobby!
+      parent.reset();
+    });
 
-    ctx.save();
-    ctx.font = 'bold ' + fontSize + 'px Kreon-Bold';
-    ctx.strokeStyle = COLOR.white;
-    ctx.fillStyle = button.color;
+    this.addInputField(new InputField(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.18,
+      this.ctx.canvas.width * .3,
+      this.ctx.canvas.width * .06,
+      {
+        idle: COLOR.lighterGray,
+        hover: COLOR.darkGray,
+        text: COLOR.white
+      },
+      'hostInput',
+      ''
+    ), parent => true);
 
-    if (button.intersect(this.inputHandler.cursor)) {
-      ctx.fillStyle = COLOR.darkerBlue;
-      this.pointing = true;
-    }
+    this.addInputField(new InputField(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * .05,
+      this.ctx.canvas.width * .3,
+      this.ctx.canvas.width * .06,
+      {
+        idle: COLOR.lighterGray,
+        hover: COLOR.darkGray,
+        text: COLOR.white
+      },
+      'playerNameInput',
+      ''
+    ), parent => true);
 
-    ctx.lineWidth = strokeWidth;
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .5 - this.ctx.canvas.width * .15,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.11,
+      'Your player name:',
+      this.ctx.canvas.width * .04,
+      COLOR.white,
+      'left',
+      'nameLabel'
+    ));
 
-    ctx.beginPath();
-    ctx.arc(
-      x - width * .5 + radius,
-      y,
-      radius, Math.PI * .5, Math.PI * 1.5
-    );
-    ctx.arc(
-      x + width * .5 - radius,
-      y,
-      radius, Math.PI * 1.5, Math.PI * .5
-    );
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .5 - this.ctx.canvas.width * .15,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.24,
+      'Host address:',
+      this.ctx.canvas.width * .04,
+      COLOR.white,
+      'left',
+      'hostLabel'
+    ));
+  }
 
+  loadJoinMenu() {
+    this.menuElements = [];
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 + this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.blue,
+        hover : COLOR.darkerBlue,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'joinButton',
+      'Join now'
+    ), parent => {
+      parent.state = 'game-lobby';
+      // something to let know that this is a player joining
+      parent.reset();
+    });
 
-    ctx.textAlign = "center";
-    ctx.fillStyle = COLOR.white;
-    ctx.fillText(button.text, x, y + height * .2);
+    this.addInputField(new InputField(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.18,
+      this.ctx.canvas.width * .3,
+      this.ctx.canvas.width * .06,
+      {
+        idle: COLOR.lighterGray,
+        hover: COLOR.darkGray,
+        text: COLOR.white
+      },
+      'hostInput',
+      '',
+    ), parent => true);
 
-    ctx.restore();
+    this.addInputField(new InputField(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * .05,
+      this.ctx.canvas.width * .3,
+      this.ctx.canvas.width * .06,
+      {
+        idle: COLOR.lighterGray,
+        hover: COLOR.darkGray,
+        text: COLOR.white
+      },
+      'playerNameInput',
+      '',
+    ), parent => true);
 
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .5 - this.ctx.canvas.width * .15,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.11,
+      'Your player name:',
+      this.ctx.canvas.width * .04,
+      COLOR.white,
+      'left',
+      'nameLabel'
+    ));
+
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .5 - this.ctx.canvas.width * .15,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.24,
+      'Host address:',
+      this.ctx.canvas.width * .04,
+      COLOR.white,
+      'left',
+      'hostLabel'
+    ));
+  }
+
+  loadGameLobby() {
+    this.menuElements = [];
+    // make some blinking text here and a cancel button.
+    // once a player connected there need to be a ready button
+    // when all players are ready then the game starts immedeatly
+  }
+
+  loadMenu() {
+    this.menuElements = [];
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 - this.ctx.canvas.width * 0.03,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.blue,
+        hover : COLOR.darkerBlue,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'joinButton',
+      'Join game'
+    ), self => {
+      self.state = 'join-game';
+      self.reset();
+    });
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .5 + this.ctx.canvas.width * 0.03,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.blue,
+        hover : COLOR.darkerBlue,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'hostButton',
+      'Host game'
+    ), self => {
+      self.state = 'host-game';
+      self.reset();
+    });
+    this.addButton(new IconButton(
+      this.ctx.canvas.width - this.ctx.canvas.width * .035,
+      this.ctx.canvas.width * .035,
+      this.ctx.canvas.width * .05,
+      this.ctx.canvas.width * .05,
+      {
+        idle: COLOR.white,
+        hover: COLOR.shadedWhite
+      },
+      'settingsButton',
+      SVG_DATA.gearlock
+    ), self => {
+      self.state = 'settings';
+      self.reset();
+    });
   }
 
 }

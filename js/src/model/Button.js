@@ -1,10 +1,11 @@
 module.exports = class Button {
-  constructor(x,y,height,width,color) {
+  constructor(x,y,width,height,colors,label) {
     this.x = x;
     this.y = y;
-    this.height = height;
     this.width = width;
-    this.color = color;
+    this.height = height;
+    this.colors = colors;
+    this.label = label;
   }
 
   intersect({x,y}) {
