@@ -126,13 +126,13 @@ module.exports = class PokerGameController {
     }
   }
   // testing
-  startGame() {
+  initGame() {
     this.game = new Game(this.gameCanvas);
     this.game.addPlayer(new Player('John',3,283791))
     this.game.addPlayer(new Player('Adam',4,832374))
     this.game.addPlayer(new Player('Daniel',5,832947))
     this.game.addPlayer(new Player('Ive',6,908732))
-    this.game.addPlayer(new Player('Holg',7,932874))
+    this.game.addPlayer(new Player('Luke',7,932874))
     this.game.startNewGame();
     this.movePlayerCards();
     this.initGameObjects();

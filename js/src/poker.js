@@ -3,5 +3,5 @@ const PokerGameController = require(path.resolve('js/src/controller/PokerGameCon
 
 let pokerController = new PokerGameController();
 
-pokerController.startGame();
+pokerController.initGame();
 pokerController.start();
