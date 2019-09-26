@@ -123,8 +123,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         this.addAlertBox(new AlertBox(
           this.ctx.canvas.width * .15,
           this.ctx.canvas.width * .15,
-          this.ctx.canvas.width * .25,
-          this.ctx.canvas.width * .1,
+          this.ctx.canvas.width * .2,
+          this.ctx.canvas.width * .05,
           {
             hover: COLOR.alertRedHover,
             idle: COLOR.alertRed,
@@ -139,6 +139,15 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
           })
         });
 
+      } else {
+        console.log("game lobby initialized");
+        // check if lobby can be created (right address and name is unique...)
+
+        // communicate to game logic layer
+
+        // delete all buttons and stuff here
+
+        // init a lobby screen
       }
     }
   }
