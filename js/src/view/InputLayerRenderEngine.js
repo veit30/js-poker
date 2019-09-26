@@ -127,7 +127,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
           this.ctx.canvas.width * .05,
           {
             hover: COLOR.alertRedHover,
-            idle: COLOR.alertRed,
+            idle: COLOR.alertRed1,
+            close: COLOR.alertRed2,
             text: COLOR.darkGray
           },
           'inputAlertBox',
