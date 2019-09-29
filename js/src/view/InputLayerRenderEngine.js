@@ -98,10 +98,17 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
   }
   // need to reset all active buttons;
   reset() {
+    let alertBox;
     console.log('resetting buttons');
     ['joinButton','hostButton','hostGameButton','hostInput','playerNameInput'].forEach(b => {
       this.inputHandler.deleteClickEventBinding(b);
-    })
+    });
+    this.menuElements.forEach(elem => {
+      if (elem instanceof AlertBox) {
+        alertBox = elem
+      }
+    });
+
     if (this.state === 'menu') {
       this.loadMenu();
     } else if (this.state === 'host-game') {
@@ -120,10 +127,11 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       if (empty) {
         this.state = 'menu';
         this.loadMenu();
+        alertBox = undefined;
         this.addAlertBox(new AlertBox(
-          this.ctx.canvas.width * .15,
-          this.ctx.canvas.width * .15,
           this.ctx.canvas.width * .2,
+          this.ctx.canvas.width * .08,
+          this.ctx.canvas.width * .3,
           this.ctx.canvas.width * .05,
           {
             hover: COLOR.alertRedHover,
@@ -131,7 +139,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
             text: COLOR.darkGray
           },
           'inputAlertBox',
-          'Name or host not set try again!'
+          'Name or host not set, try again!'
         ),(parent,self) => {
           parent.inputHandler.deleteClickEventBinding(self.label);
           parent.menuElements = parent.menuElements.filter(e => {
@@ -150,6 +158,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         // init a lobby screen
       }
     }
+    alertBox && this.menuElements.push(alertBox);
+
   }
 
   loadHostMenu() {
