@@ -15,11 +15,11 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     this.state = 'menu';
     this.reset();
     this.pointing = false;
-    // this.inputFields = {
-    //   host: undefined;
-    //   name: undefined;
-    // }
-    // this.updateButtons();
+    this.inputFields = {
+      host: undefined,
+      name: undefined,
+      connectionType: undefined, // host or join
+    }
   }
 
   addButton(button,callback) {
@@ -96,7 +96,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       this.ctx.canvas.style.cursor = 'auto';
     }
   }
-  // need to reset all active buttons;
+
   reset() {
     let alertBox;
     console.log('resetting buttons');
@@ -179,6 +179,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       'Host'
     ), parent => {
       parent.state = 'game-lobby';
+
+
       // player is hosting and joining the lobby!
       parent.reset();
     });
