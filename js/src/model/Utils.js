@@ -15,9 +15,8 @@ module.exports = {
     darkerBlue: '#296ea3',
     darkGray: '#242424',
     lighterGray: '#3e3e3e',
-    alertRedHover: '#ec4f4f',
-    alertRed1: '#ff9494',
-    alertRed2: '#ff6a6a'
+    alertRedHover: '#ec6e6e',
+    alertRed: '#ff9494',
   },
   CARD_SUIT: {
     DIAMONDS: 1,

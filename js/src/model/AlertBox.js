@@ -4,16 +4,12 @@ module.exports = class AlertBox extends Button {
   constructor(x,y,width,height,colors,label,text) {
     super(x,y,width,height,colors,label);
     this.text = text || '';
-    // this.timer = 10000;
-  }
-
-  intersectWithClose() {
-
   }
 
   intersect({x,y}) {
+    let radius = this.height * .1
     if (x >= (this.x - this.width * .5) && x <= (this.x + this.width * .5)) {
-      if(y >= (this.y - this.height * .5) && y <= (this.y + this.height * .5)) {
+      if(y >= (this.y - this.height * .5 - radius) && y <= (this.y + this.height * .5 + radius)) {
         return true;
       }
     }
@@ -27,7 +23,7 @@ module.exports = class AlertBox extends Button {
       ctx.fillStyle = this.colors.idle;
     }
     let radius = this.height * 0.1;
-    let fontSize = this.height * .2;
+    let fontSize = this.height * .4;
     ctx.beginPath();
     ctx.arc(
       this.x - this.width * .5 + radius, this.y - this.height * .5,
