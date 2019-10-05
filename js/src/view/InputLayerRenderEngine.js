@@ -166,7 +166,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
           });
         });
       } else {
-        if (!testHost(host)) {
+        if (host !== '' && !testHost(host)) {
           this.state = 'menu';
           this.loadMenu();
           alerts = [];

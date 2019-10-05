@@ -8,6 +8,7 @@ const GameObjectController = require('./GameObjectController.js');
 const InputHandler = require('./InputHandler.js');
 const Text = require('../model/Text.js');
 const Game = require('../model/Game.js');
+const GameServer = require('../server/GameServer.js');
 const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
   playersCardPosition
@@ -171,31 +172,27 @@ module.exports = class PokerGameController {
       this.stop();
       // server creation
       if (this.inputLayerInterface.connectionMethod === 'host') {
-        // this.server = new GameServer(this.inputLayerInterface.host);
-        // let init = await this.server.init();
-        // if (!init) {
-        //   this.inputView.state = 'menu';
-        //   this.inputLayerInterface.gameState = 'menu';
-        //   this.inputLayerInterface.alert = {};
-        //   this.inputLayerInterface.alert.text = `Can't create server on host: ${this.inputLayerInterface.host}.`;
-        //   this.inputLayerInterface.alert.label = 'noServerAlertBox';
-        //   this.inputLayerInterface.connectionMethod = '';
-        //   this.inputView.reset();
-        //   this.raf = requestAnimationFrame(() => this.start());
-        // }
+        this.server = new GameServer(this.inputLayerInterface.host);
+        let init = await this.server.init();
+        if (!init) {
+          this.inputView.state = 'menu';
+          this.inputLayerInterface.gameState = 'menu';
+          this.inputLayerInterface.alert = {};
+          this.inputLayerInterface.alert.text = `Can't create server on host: ${this.inputLayerInterface.host}.`;
+          this.inputLayerInterface.alert.label = 'noServerAlertBox';
+          this.inputLayerInterface.connectionMethod = '';
+          this.inputView.reset();
+          this.raf = requestAnimationFrame(() => this.start());
+        }
         this.inputLayerInterface.connectionMethod = '';
         this.clientSocket = io(`http://${this.inputLayerInterface.host}`);
-        this.clientSocket.on('connection', () => {
-          console.log("got some connection to server");
-        })
         this.clientSocket.on('msg', data => {
           console.log(`Received msg:${data.msg}`);
         });
-
         this.clientSocket.on('postPlayers', data => {
+          this.inputLayerInterface.players = data.players;
           console.log(data.players);
         });
-        this.clientSocket.emit('msg', {msg: "hi"});
         this.clientSocket.emit('newGame', {canvas: this.gameCanvas});
         this.clientSocket.emit('playerJoin',{name:this.inputLayerInterface.playerName});
       } else if (this.inputLayerInterface.connectionMethod === 'join') {

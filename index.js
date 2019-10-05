@@ -32,17 +32,17 @@ function createWindow () {
     win = null
   })
 
-  createBackgroundProcess();
-
-  setTimeout(() => {
-    let socket = io('http://localhost:8080');
-    socket.emit('msg',{msg:"sa"});
-    socket.on('msg', data => {
-      console.log(data);
-    });
-
-
-  }, 2000)
+  // createBackgroundProcess();
+  //
+  // setTimeout(() => {
+  //   let socket = io('http://localhost:8080');
+  //   socket.emit('msg',{msg:"sa"});
+  //   socket.on('msg', data => {
+  //     console.log(data);
+  //   });
+  //
+  //
+  // }, 2000)
 
 
 }
