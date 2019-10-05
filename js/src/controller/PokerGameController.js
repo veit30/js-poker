@@ -186,17 +186,15 @@ module.exports = class PokerGameController {
         }
         this.inputLayerInterface.connectionMethod = '';
         this.clientSocket = io(`http://${this.inputLayerInterface.host}`);
-        this.clientSocket.on('msg', data => {
-          console.log(`Received msg:${data.msg}`);
-        });
-        this.clientSocket.on('postPlayers', data => {
-          this.inputLayerInterface.players = data.players;
-          console.log(data.players);
-        });
+        this.addSocketHandlers();
         this.clientSocket.emit('newGame', {canvas: this.gameCanvas});
         this.clientSocket.emit('playerJoin',{name:this.inputLayerInterface.playerName});
       } else if (this.inputLayerInterface.connectionMethod === 'join') {
-
+        this.inputLayerInterface.connectionMethod = '';
+        this.clientSocket = io(`http://${this.inputLayerInterface.host}`);
+        this.addSocketHandlers();
+        this.clientSocket.emit('newGame', {canvas: this.gameCanvas});
+        this.clientSocket.emit('playerJoin',{name:this.inputLayerInterface.playerName});
       }
     }
     this.raf = requestAnimationFrame(() => this.start());
@@ -207,6 +205,16 @@ module.exports = class PokerGameController {
     gameObjecs.forEach(g => {
       this.objectController.calcRelPosProp(g);
     })
+  }
+
+  addSocketHandlers() {
+    this.clientSocket.on('msg', data => {
+      console.log(`Received msg:${data.msg}`);
+    });
+    this.clientSocket.on('postPlayers', data => {
+      this.inputLayerInterface.players = data.players;
+      console.log(data.players);
+    });
   }
 
   collectGameObjects() {
