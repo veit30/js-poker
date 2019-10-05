@@ -4,9 +4,9 @@ module.exports = class Label {
     this.y = y;
     this.size = size;
     this.color = color;
-    this.align = align || 'center';
+    this.align = ['start','end','left','center','right'].includes(align) ? align : 'center';
     this.text = text;
-    this.label = label;
+    this.label = label || 'none';
   }
 
   render(ctx) {

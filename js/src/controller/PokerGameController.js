@@ -12,6 +12,7 @@ const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
   playersCardPosition
 } = require('../model/Utils.js');
+const io = require('socket.io-client');
 
 
 // controller for poker game
@@ -25,6 +26,10 @@ module.exports = class PokerGameController {
     this.gameCanvas;
     this.inputCanvas;
     this.inputFields = []
+    this.inputLayerInterface = {};
+    this.server;
+    this.serverSocket;
+    this.clientSocket;
     /*
     this.game = {
       round: 0,
@@ -42,7 +47,8 @@ module.exports = class PokerGameController {
     this.gameView = new GameRenderEngine(this.gameCanvas.getContext('2d'));
     this.inputView = new InputLayerRenderEngine(
       this.inputCanvas.getContext('2d'),
-      this.inputHandler
+      this.inputHandler,
+      this.inputLayerInterface
     );
     this.objectController = new GameObjectController(this.gameCanvas.getContext('2d'));
     this.addResizeListener();
@@ -70,7 +76,7 @@ module.exports = class PokerGameController {
       this.tableView.renderTable();
       this.objectController.windowResized = true;
       this.inputView.reset();
-      this.game.potChanged = true;
+      // this.game.potChanged = true;
       this.start();
     });
   }
@@ -139,10 +145,9 @@ module.exports = class PokerGameController {
   }
 
   // basic game loop function
-  start() {
+  async start() {
     this.inputView.renderMenu();
-    this.game.state = this.inputView.state;
-    if (this.game.state === 'ingame') {
+    if (this.inputLayerInterface.gameState === 'ingame') {
       // Keyboard inputs are only used for testing purposes for now
       if (this.inputHandler.askKeyPress(KEY.C)) {
         this.flopTurnRiver();
@@ -162,6 +167,40 @@ module.exports = class PokerGameController {
       }
       this.updateGameObjects();
       this.renderGameObjects();
+    } else if (this.inputLayerInterface.gameState === 'game-lobby') {
+      this.stop();
+      // server creation
+      if (this.inputLayerInterface.connectionMethod === 'host') {
+        // this.server = new GameServer(this.inputLayerInterface.host);
+        // let init = await this.server.init();
+        // if (!init) {
+        //   this.inputView.state = 'menu';
+        //   this.inputLayerInterface.gameState = 'menu';
+        //   this.inputLayerInterface.alert = {};
+        //   this.inputLayerInterface.alert.text = `Can't create server on host: ${this.inputLayerInterface.host}.`;
+        //   this.inputLayerInterface.alert.label = 'noServerAlertBox';
+        //   this.inputLayerInterface.connectionMethod = '';
+        //   this.inputView.reset();
+        //   this.raf = requestAnimationFrame(() => this.start());
+        // }
+        this.inputLayerInterface.connectionMethod = '';
+        this.clientSocket = io(`http://${this.inputLayerInterface.host}`);
+        this.clientSocket.on('connection', () => {
+          console.log("got some connection to server");
+        })
+        this.clientSocket.on('msg', data => {
+          console.log(`Received msg:${data.msg}`);
+        });
+
+        this.clientSocket.on('postPlayers', data => {
+          console.log(data.players);
+        });
+        this.clientSocket.emit('msg', {msg: "hi"});
+        this.clientSocket.emit('newGame', {canvas: this.gameCanvas});
+        this.clientSocket.emit('playerJoin',{name:this.inputLayerInterface.playerName});
+      } else if (this.inputLayerInterface.connectionMethod === 'join') {
+
+      }
     }
     this.raf = requestAnimationFrame(() => this.start());
   }

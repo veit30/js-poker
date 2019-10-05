@@ -267,7 +267,14 @@ module.exports = {
     },'');
   },
   round: x => ~~(x + 0.5),
-  rT: x => ~~(x*1000 + 0.5) / 1000
+  rT: x => ~~(x*1000 + 0.5) / 1000,
+  testHost: hostAddress => {
+    let hostParams = hostAddress.split(":");
+    if (hostParams.length !== 2) return false;
+    let port = parseInt(hostParams[1]);
+    if (!port) return false;
+    if (hostParams[0] !== '') return true;
+  }
 
 }
 
