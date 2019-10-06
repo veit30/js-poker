@@ -79,6 +79,26 @@ module.exports = class Game {
     this.players.push(player);
   }
 
+  removePlayerById(id) {
+    this.players = this.players.filter(p => p.clientId !== id);
+  }
+
+  readyPlayer(id) {
+    this.players.forEach(p => {
+      if (p.clientId === id) {
+        p.isReady();
+      }
+    });
+  }
+
+  unreadyPlayer(id) {
+    this.players.forEach(p => {
+      if (p.clientId === id) {
+        p.notReady();
+      }
+    });
+  }
+
   get potStr() {
     return numDots(this.pot);
   }

@@ -1,23 +1,28 @@
 const RenderEngine = require('./RenderEngine.js');
 const TextButton = require('../model/TextButton.js');
+const SwitchTextButton = require('../model/SwitchTextButton.js');
 const IconButton = require('../model/IconButton.js');
 const InputField = require('../model/InputField.js');
 const AlertBox = require('../model/AlertBox.js');
 const Label = require('../model/Label.js');
 const Text = require('../model/Text.js');
 const PlayerBar = require('../model/PlayerBar.js');
+const Countdown = require('../model/Countdown.js');
 const {COLOR, FONT, SVG_DATA, testHost} = require('../model/Utils.js');
 
 module.exports = class InputLayerRenderEngine extends RenderEngine {
-  constructor(ctx,inputHandler,layerInterface) {
+  constructor(ctx,inputHandler) {
     super(ctx)
 
     this.inputHandler = inputHandler;
     this.menuElements = []
     this.state = 'menu';
     this.connectionMethod = ''
-    this.layerInterface = layerInterface;
+    this.inputs = {}; // can have host and name
+    this.alert = {}; // can have text and label
+    this.players;
     this.pointing = false;
+    this.readyState = false;
     this.reset();
   }
 
@@ -63,9 +68,9 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
   renderMenu() {
     this.pointing = false;
     let hover = false;
-    this.layerInterface.gameState = this.state;
     if (this.state === 'ingame') {
       this.clear();
+      this.menuElements = [];
     } else {
       this.renderBackground(COLOR.darkGrey);
     }
@@ -94,8 +99,10 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       me.render(this.ctx,hover);
     })
 
-    if (this.layerInterface.players && this.layerInterface.players.length !== 0) {
-      this.renderPlayerBars(this.layerInterface.players);
+    if (this.state === 'game-lobby') {
+      if (this.players && this.players.length !== 0) {
+        this.renderPlayerBars(this.players);
+      }
     }
 
     if (this.pointing) {
@@ -112,10 +119,11 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     ['joinButton','hostButton','hostGameButton','hostInput','playerNameInput'].forEach(b => {
       this.inputHandler.deleteClickEventBinding(b);
     });
-    if (this.layerInterface.alert) {
+    if (this.alert && this.alert.text) {
       this.addAlertBox(this.generateAlertBox(
-        this.layerInterface.alert.text,
-        this.layerInterface.alert.label
+        this.alert.text,
+        this.alert.label,
+        this.alert.type
       ),(parent,self) => {
         parent.inputHandler.deleteClickEventBinding(self.label);
         parent.menuElements = parent.menuElements.filter(e => {
@@ -123,7 +131,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         });
       });
     }
-    delete this.layerInterface.alert;
+    this.alert = {};
     this.menuElements.forEach(elem => {
       if (elem instanceof AlertBox) {
         alerts.push(elem);
@@ -145,7 +153,12 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
             empty = true
           }
           if (elem.label === 'hostInput') {
-            host = elem.text;
+            // TEST
+            if (elem.text === 'lh') {
+              host = 'localhost:3000'
+            } else {
+              host = elem.text;
+            }
           }
           if (elem.label === 'playerNameInput') {
             playerName = elem.text;
@@ -158,7 +171,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         alerts = [];
         this.addAlertBox(this.generateAlertBox(
           'Name or host not set, try again!',
-          'notSetAlertBox'
+          'notSetAlertBox',
+          'warn'
         ),(parent,self) => {
           parent.inputHandler.deleteClickEventBinding(self.label);
           parent.menuElements = parent.menuElements.filter(e => {
@@ -172,7 +186,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
           alerts = [];
           this.addAlertBox(this.generateAlertBox(
             'Wrong host address.',
-            'wrongHostAlertBox'
+            'wrongHostAlertBox',
+            'warn'
           ),(parent,self) => {
             parent.inputHandler.deleteClickEventBinding(self.label);
             parent.menuElements = parent.menuElements.filter(e => {
@@ -180,26 +195,50 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
             });
           });
         } else {
-          this.layerInterface.host = host;
-          this.layerInterface.playerName = playerName;
-          this.layerInterface.connectionMethod = this.connectionMethod;
-          if (this.connectionMethod !== '') {
-            this.loadGameLobby();
-          }
-          this.connectionMethod = '';
+          this.inputs.host = host;
+          this.inputs.name = playerName;
+          // if (this.connectionMethod !== '') {
+          //   this.loadGameLobby();
+          // }
         }
+        this.loadGameLobby();
         console.log("game lobby initialized");
-        // check if lobby can be created (right address and name is unique...)
-
-        // communicate to game logic layer
-
-        // delete all buttons and stuff here
-
-        // init a lobby screen
       }
     }
     alerts && this.menuElements.push(...alerts);
 
+  }
+
+  initStartCountdown() {
+    // delete countdown labels and countdown
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .75,
+      this.ctx.canvas.height * .9,
+      'Game starting in...',
+      this.ctx.canvas.height * .02,
+      COLOR.shadedWhite,
+      'center',
+      'countdown'
+    ));
+    this.menuElements.push(new Countdown(
+      this.ctx.canvas.width * .9,
+      this.ctx.canvas.height * .9,
+      3,
+      this.ctx.canvas.height * .02,
+      COLOR.shadedWhite,
+      'right',
+      'countdown',
+      () => {
+        this.abordStartCountdown();
+        // something here?
+      }
+    ));
+  }
+
+  abordStartCountdown() {
+    this.menuElements = this.menuElements.filter(me => {
+      return me.label != 'countdown';
+    });
   }
 
   renderPlayerBars(players) {
@@ -218,7 +257,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     });
   }
 
-  generateAlertBox(text,label) {
+  generateAlertBox(text,label,type) {
     let fontSize = this.ctx.canvas.width * .02;
     let textWidth = Text.calcWidthFromText(this.ctx,text,fontSize,'Kreon-Bold');
     let alertWidth = textWidth + textWidth * 0.2;
@@ -228,12 +267,25 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       alertWidth, // width in abh. von text
       this.ctx.canvas.width * .05,
       {
-        hover: COLOR.alertRedHover,
-        idle: COLOR.alertRed,
-        text: COLOR.darkGray
+        warn: {
+          hover: COLOR.alertRedHover,
+          idle: COLOR.alertRed,
+          text: COLOR.darkGray
+        },
+        neutral: {
+          hover: COLOR.alertRedHover,
+          idle: COLOR.alertRed,
+          text: COLOR.darkGray
+        },
+        good: {
+          hover: COLOR.alertGreenHover,
+          idle: COLOR.alertGreen,
+          text: COLOR.darkGray
+        }
       },
       label,
-      text
+      text,
+      type
     );
     return a
   }
@@ -391,6 +443,33 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       'center',
       'lobby-label'
     ));
+    this.addButton(new SwitchTextButton(
+      this.ctx.canvas.width * .5,
+      this.ctx.canvas.height * .9,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.buttonGray,
+        hover : COLOR.buttonGrayHover,
+        triggeredHover: COLOR.buttonGreenHover,
+        triggeredIdle: COLOR.buttonGreen,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'readyButton',
+      ['Not Ready','Ready']
+    ), parent => {
+      let t = false;
+      parent.menuElements.forEach(me => {
+        if (me instanceof SwitchTextButton && me.label === 'readyButton') {
+          me.trigger();
+          t = me.triggered;
+        }
+      });
+      parent.readyState = t;
+      // self.state = 'game-lobby';
+      // self.reset();
+    })
     // make some blinking text here and a cancel button.
     // once a player connected there need to be a ready button
     // when all players are ready then the game starts immedeatly
@@ -411,9 +490,9 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       },
       'joinButton',
       'Join game'
-    ), self => {
-      self.state = 'join-game';
-      self.reset();
+    ), parent => {
+      parent.state = 'join-game';
+      parent.reset();
     });
     this.addButton(new TextButton(
       this.ctx.canvas.width * .5,
@@ -428,9 +507,9 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       },
       'hostButton',
       'Host game'
-    ), self => {
-      self.state = 'host-game';
-      self.reset();
+    ), parent => {
+      parent.state = 'host-game';
+      parent.reset();
     });
     this.addButton(new IconButton(
       this.ctx.canvas.width - this.ctx.canvas.width * .035,
@@ -443,10 +522,10 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       },
       'settingsButton',
       SVG_DATA.gearlock
-    ), self => {
+    ), parent => {
       //self.state = 'settings';
-      self.state = 'menu';
-      self.reset();
+      parent.state = 'menu';
+      parent.reset();
     });
   }
 

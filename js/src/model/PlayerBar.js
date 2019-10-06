@@ -28,7 +28,11 @@ module.exports = class PlayerBar {
     ctx.font = fontSize + 'px Kreon-Bold';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.fillStyle = COLOR.shadedWhite;
+    if (player.ready) {
+      ctx.fillStyle = COLOR.buttonGreen;
+    } else {
+      ctx.fillStyle = COLOR.shadedWhite;
+    }
     // player name
     ctx.fillText(player.name,x - width * .45,y);
     ctx.fillText(player.positionId,x + width * .38, y);
