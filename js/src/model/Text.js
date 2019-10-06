@@ -22,4 +22,13 @@ module.exports = class Text {
     return this.weight + ' ' + this.size + 'px ' + this.font;
   }
 
+  static calcWidthFromText(ctx,text,fontSize,font,fontWeight) {
+    fontWeight = fontWeight || '';
+    ctx.save();
+    ctx.font = fontWeight + ' ' + fontSize + 'px ' + font;
+    let width = ctx.measureText(text).width;
+    ctx.restore();
+    return width;
+  }
+
 }

@@ -17,6 +17,12 @@ module.exports = {
     lighterGray: '#3e3e3e',
     alertRedHover: '#ec6e6e',
     alertRed: '#ff9494',
+    alertGreen: '#97e391',
+    alertGreenHover: '#69d760',
+    buttonGreen: '#64bd5e',
+    buttonGreenHover: '#97d194',
+    buttonGray: '#8b8b8b',
+    buttonGrayHover: '#9fbf9c'
   },
   CARD_SUIT: {
     DIAMONDS: 1,
@@ -267,7 +273,14 @@ module.exports = {
     },'');
   },
   round: x => ~~(x + 0.5),
-  rT: x => ~~(x*1000 + 0.5) / 1000
+  rT: x => ~~(x*1000 + 0.5) / 1000,
+  testHost: hostAddress => {
+    let hostParams = hostAddress.split(":");
+    if (hostParams.length !== 2) return false;
+    let port = parseInt(hostParams[1]);
+    if (!port) return false;
+    if (hostParams[0] !== '') return true;
+  }
 
 }
 

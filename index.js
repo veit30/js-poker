@@ -2,6 +2,9 @@ const { app, BrowserWindow } = require('electron')
 // Behalten Sie eine globale Referenz auf das Fensterobjekt.
 // Wenn Sie dies nicht tun, wird das Fenster automatisch geschlossen,
 // sobald das Objekt dem JavaScript-Garbagekollektor übergeben wird.
+const { fork } = require('child_process');
+// const ps = fork(`${__dirname}/server.js`)
+const io = require('socket.io-client');
 
 let win
 
@@ -28,6 +31,28 @@ function createWindow () {
     // Das ist der Zeitpunkt, an dem Sie das zugehörige Element löschen sollten.
     win = null
   })
+
+  // createBackgroundProcess();
+  //
+  // setTimeout(() => {
+  //   let socket = io('http://localhost:8080');
+  //   socket.emit('msg',{msg:"sa"});
+  //   socket.on('msg', data => {
+  //     console.log(data);
+  //   });
+  //
+  //
+  // }, 2000)
+
+
+}
+
+function createBackgroundProcess() {
+  serverProcess = fork(__dirname + '/js/src/server/server.js');
+  console.log(__dirname)
+  // serverProcess.on('message', msg => {
+  //   console.log(msg)
+  // })
 }
 
 // Diese Methode wird aufgerufen, wenn Electron mit der

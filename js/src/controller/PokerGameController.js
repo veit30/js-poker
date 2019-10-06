@@ -8,10 +8,13 @@ const GameObjectController = require('./GameObjectController.js');
 const InputHandler = require('./InputHandler.js');
 const Text = require('../model/Text.js');
 const Game = require('../model/Game.js');
+const GameServer = require('../server/GameServer.js');
+const SwitchTextButton = require('../model/SwitchTextButton.js');
 const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
   playersCardPosition
 } = require('../model/Utils.js');
+const io = require('socket.io-client');
 
 
 // controller for poker game
@@ -25,17 +28,11 @@ module.exports = class PokerGameController {
     this.gameCanvas;
     this.inputCanvas;
     this.inputFields = []
-    /*
-    this.game = {
-      round: 0,
-      state: 'menu',
-      pot: 10000,
-      potChanged: true
-    };
-    */
-    this.game;
-    this.renderState = 'menu';
-
+    this.server;
+    this.serverSocket;
+    this.clientSocket;
+    this.connectToServer = false;
+    this.ckientReadyState = false;
     this.inputHandler = new InputHandler();
     this.setupCanvas();
     this.tableView = new TableRenderEngine(this.tableCanvas.getContext('2d'));
@@ -70,7 +67,7 @@ module.exports = class PokerGameController {
       this.tableView.renderTable();
       this.objectController.windowResized = true;
       this.inputView.reset();
-      this.game.potChanged = true;
+      // this.game.potChanged = true;
       this.start();
     });
   }
@@ -139,10 +136,9 @@ module.exports = class PokerGameController {
   }
 
   // basic game loop function
-  start() {
+  async start() {
     this.inputView.renderMenu();
-    this.game.state = this.inputView.state;
-    if (this.game.state === 'ingame') {
+    if (this.inputView.state === 'ingame') {
       // Keyboard inputs are only used for testing purposes for now
       if (this.inputHandler.askKeyPress(KEY.C)) {
         this.flopTurnRiver();
@@ -160,8 +156,46 @@ module.exports = class PokerGameController {
         this.displayPotSize();
         this.game.noticedPotSize();
       }
-      this.updateGameObjects();
-      this.renderGameObjects();
+      // this.updateGameObjects();
+      // this.renderGameObjects();
+    } else if (this.inputView.state === 'game-lobby') {
+      // first time in lobby
+      if (this.inputView.connectionMethod === 'host') {
+        this.inputView.connectionMethod = '';
+        this.server = new GameServer(this.inputView.inputs.host);
+        let init = await this.server.init();
+        if (!init) {
+          this.inputView.state = 'menu';
+          this.sendWarning(`Can't create server on host: ${this.inputView.inputs.host}.`, 'noServerAlert');
+          this.raf = requestAnimationFrame(() => this.start());
+        }
+        this.clientSocket = io(`http://${this.inputView.inputs.host}`);
+        this.addSocketHandlers();
+        this.clientSocket.emit('newGame', {canvas: this.gameCanvas});
+        this.clientSocket.emit('playerJoin',{name:this.inputView.inputs.name});
+      } else if (this.inputView.connectionMethod === 'join') {
+        this.inputView.connectionMethod = '';
+        this.clientSocket = io(`http://${this.inputView.inputs.host}`);
+        // wait for max of 3 sec for a connection to happen
+        this.addSocketHandlers();
+        setTimeout(() => {
+          if (!this.connectToServer) {
+            this.inputView.state = 'menu';
+            this.sendWarning(`Unable to connect to ${this.inputView.inputs.host}`, 'noConAlert');
+            this.raf = requestAnimationFrame(() => this.start());
+          }
+        }, 3000);
+        this.clientSocket.emit('playerJoin',{name:this.inputView.inputs.name});
+      }
+      // everytime else
+      if (this.inputView.readyState && !this.clientReadyState) {
+        this.clientReadyState = true;
+        this.clientSocket.emit('playerReady');
+      } else if (!this.inputView.readyState && this.clientReadyState) {
+        this.clientReadyState = false;
+        this.clientSocket.emit('playerNotReady');
+      }
+
     }
     this.raf = requestAnimationFrame(() => this.start());
   }
@@ -170,6 +204,66 @@ module.exports = class PokerGameController {
     let gameObjecs = this.collectGameObjects();
     gameObjecs.forEach(g => {
       this.objectController.calcRelPosProp(g);
+    })
+  }
+
+  sendWarning(text, label) {
+    this.inputView.alert = {};
+    this.inputView.alert.text = text;
+    this.inputView.alert.label = label;
+    this.inputView.alert.type = 'warn';
+    this.inputView.reset();
+  }
+
+  sendGood(text, label) {
+    this.inputView.alert = {};
+    this.inputView.alert.text = text;
+    this.inputView.alert.label = label;
+    this.inputView.alert.type = 'good';
+    this.inputView.reset();
+  }
+
+  addSocketHandlers() {
+    this.clientSocket.on('msg', data => {
+      console.log(`Received msg:${data.msg}`);
+    });
+    this.clientSocket.on('returnPlayers', data => {
+      if(!data) {
+        this.inputView.state = 'menu';
+        this.sendWarning('Sorry, max. amout of players reached on table.', 'tableFullAlert');
+        return;
+      }
+      let allReady = data.players.reduce((acc,cur) => {
+        if(!acc) return false;
+        if (!cur.ready) return false;
+        return true;
+      },true)
+      console.log(data.players, allReady);
+      if (allReady && data.players.length === 1) {
+        this.sendWarning('Two or more players required to start a game.', 'notEnoughtPlayersAlert');
+        // this.clientSocket.emit('playerNotReady');
+        this.inputView.menuElements.forEach(me => {
+          if (me instanceof SwitchTextButton && me.label === 'readyButton') {
+            me.triggered = false;
+          }
+        });
+        this.inputView.readyState = false;
+        return;
+      } else if (allReady && data.players.length > 1) {
+        this.inputView.initStartCountdown();
+      } else if (!allReady) {
+        this.inputView.abordStartCountdown();
+      }
+      this.inputView.players = data.players;
+    });
+    this.clientSocket.on('startGame', () => {
+      this.inputView.state = 'ingame';
+    })
+    this.clientSocket.on('connect', () => {
+      this.connectToServer = true;
+    });
+    this.clientSocket.on('addr', data => {
+      this.sendGood(`Connected to: [${data.address}:${data.port}]`, 'connectAlert');
     })
   }
 

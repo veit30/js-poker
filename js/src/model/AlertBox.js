@@ -1,9 +1,10 @@
 const Button = require('./Button.js');
 
 module.exports = class AlertBox extends Button {
-  constructor(x,y,width,height,colors,label,text) {
+  constructor(x,y,width,height,colors,label,text,type) {
     super(x,y,width,height,colors,label);
     this.text = text || '';
+    this.type = type || 'warn'; // also 'neutral', 'good'
   }
 
   intersect({x,y}) {
@@ -18,9 +19,9 @@ module.exports = class AlertBox extends Button {
 
   render(ctx,hover) {
     if (hover) {
-      ctx.fillStyle = this.colors.hover;
+      ctx.fillStyle = this.colors[this.type].hover;
     } else {
-      ctx.fillStyle = this.colors.idle;
+      ctx.fillStyle = this.colors[this.type].idle;
     }
     let radius = this.height * 0.1;
     let fontSize = this.height * .4;
@@ -47,7 +48,7 @@ module.exports = class AlertBox extends Button {
     ctx.font = fontSize + 'px Kreon-Bold';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.fillStyle = this.colors.text;
+    ctx.fillStyle = this.colors[this.type].text;
 
     ctx.fillText(this.text,this.x - this.width * .45,this.y);
 
