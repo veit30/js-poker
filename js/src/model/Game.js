@@ -8,7 +8,7 @@ module.exports = class Game {
     this.communityCards = [];
     this.pot = 0;
     this.lastPot = 0;
-    this.state = 'new'; // flop, turn, river
+    this.state = 'new'; // flop, turn, river, end
     this.canvas = canvas;
     // this.chips = []
   }

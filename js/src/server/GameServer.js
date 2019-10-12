@@ -82,7 +82,11 @@ module.exports = class GameServer {
           if (allReady) {
             this.io.emit('msg',{msg:'all players were ready for 3 seconds'});
             // starting game here
-            this.io.emit('startGame');
+            this.game.startNewGame();
+            this.io.emit('startGame', {
+              state: this.game.state,
+              player: this.game.players,
+            });
           }
         }, 4000);
       });
@@ -97,16 +101,6 @@ module.exports = class GameServer {
       socket.on('msg', data => {
         console.log(data);
       });
-
-      socket.on('msg', data => {
-        console.log(data);
-      });
-
-      socket.on('msg', data => {
-        console.log(data);
-      });
-
-
 
       this.io.on('disconnect', () => {
         console.log('user disconnected');

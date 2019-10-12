@@ -256,8 +256,9 @@ module.exports = class PokerGameController {
       }
       this.inputView.players = data.players;
     });
-    this.clientSocket.on('startGame', () => {
+    this.clientSocket.on('startGame', data => {
       this.inputView.state = 'ingame';
+      console.log(data);
     })
     this.clientSocket.on('connect', () => {
       this.connectToServer = true;
