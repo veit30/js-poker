@@ -2,14 +2,13 @@ const {CARD_VALUE, CARD_SUIT, numDots} = require('./Utils.js');
 const Card = require('./Card.js');
 
 module.exports = class Game {
-  constructor(canvas) {
+  constructor() {
     this.deck = [];
     this.players = [];
     this.communityCards = [];
     this.pot = 0;
     this.lastPot = 0;
     this.state = 'new'; // flop, turn, river, end
-    this.canvas = canvas;
     // this.chips = []
   }
 
@@ -26,8 +25,8 @@ module.exports = class Game {
     Object.keys(CARD_SUIT).forEach(suit => {
       Object.keys(CARD_VALUE).forEach(value => {
         card = new Card(
-          this.canvas.width * .5,
-          this.canvas.height * .5 - (this.canvas.width * .4) * .35,
+          undefined,
+          undefined,
           0,
           CARD_SUIT[suit],
           CARD_VALUE[value]
@@ -36,6 +35,10 @@ module.exports = class Game {
       })
     });
   }
+
+  // this.canvas.width * .5,
+  // this.canvas.height * .5 - (this.canvas.width * .4) * .35,
+  // 0,
 
   shuffleDeck() {
     this.deck = this.deck

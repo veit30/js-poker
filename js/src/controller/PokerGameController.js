@@ -12,7 +12,7 @@ const GameServer = require('../server/GameServer.js');
 const SwitchTextButton = require('../model/SwitchTextButton.js');
 const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
-  playersCardPosition
+  playersCardPosition, toCard
 } = require('../model/Utils.js');
 const io = require('socket.io-client');
 
@@ -20,10 +20,10 @@ const io = require('socket.io-client');
 // controller for poker game
 module.exports = class PokerGameController {
   // maybe as player json?
-  constructor(options) {
+  constructor() {
 
-    this.options = options;
     this.chips = [];
+    this.game;
     this.tableCanvas;
     this.gameCanvas;
     this.inputCanvas;
@@ -152,12 +152,12 @@ module.exports = class PokerGameController {
         this.game.pot--;
         this.game.potChanged = true;
       }
-      if (this.game.hasNewPot()) {
-        this.displayPotSize();
-        this.game.noticedPotSize();
-      }
-      // this.updateGameObjects();
-      // this.renderGameObjects();
+      // if (this.game.hasNewPot()) {
+      //   this.displayPotSize();
+      //   this.game.noticedPotSize();
+      // }
+      this.updateGameObjects();
+      this.renderGameObjects();
     } else if (this.inputView.state === 'game-lobby') {
       // first time in lobby
       if (this.inputView.connectionMethod === 'host') {
@@ -171,7 +171,7 @@ module.exports = class PokerGameController {
         }
         this.clientSocket = io(`http://${this.inputView.inputs.host}`);
         this.addSocketHandlers();
-        this.clientSocket.emit('newGame', {canvas: this.gameCanvas});
+        this.clientSocket.emit('newGame');
         this.clientSocket.emit('playerJoin',{name:this.inputView.inputs.name});
       } else if (this.inputView.connectionMethod === 'join') {
         this.inputView.connectionMethod = '';
@@ -200,11 +200,9 @@ module.exports = class PokerGameController {
     this.raf = requestAnimationFrame(() => this.start());
   }
 
-  initGameObjects() {
-    let gameObjecs = this.collectGameObjects();
-    gameObjecs.forEach(g => {
-      this.objectController.calcRelPosProp(g);
-    })
+  stop() {
+    cancelAnimationFrame(this.raf);
+    this.raf = undefined;
   }
 
   sendWarning(text, label) {
@@ -258,7 +256,35 @@ module.exports = class PokerGameController {
     });
     this.clientSocket.on('startGame', data => {
       this.inputView.state = 'ingame';
-      console.log(data);
+      this.game = data;
+      console.log(this.game);
+      this.game.players.forEach(p => {
+        let card1 = new Card();
+        Object.assign(card1,p.cards[0]);
+        console.log(card1);
+        console.log(card1.constructor.name);
+        // p.cards[0].setProps({
+        //   x: this.gameCanvas.width * .5,
+        //   y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+        //   rotation: 0
+        // });
+        // p.cards[1].setProps({
+        //   x: this.gameCanvas.width * .5,
+        //   y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+        //   rotation: 0
+        // });
+      });
+      this.game.deck.forEach(c => {
+        c.setProps({
+          x: this.gameCanvas.width * .5,
+          y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+          rotation: 0
+        });
+      })
+      // add right player positions
+      console.log(this.game);
+      this.initGameObjects();
+      this.movePlayerCards();
     })
     this.clientSocket.on('connect', () => {
       this.connectToServer = true;
@@ -266,17 +292,6 @@ module.exports = class PokerGameController {
     this.clientSocket.on('addr', data => {
       this.sendGood(`Connected to: [${data.address}:${data.port}]`, 'connectAlert');
     })
-  }
-
-  collectGameObjects() {
-    let gameObjects = [];
-    this.game.players.forEach(p => {
-      gameObjects.push(...p.cards);
-      gameObjects.push(...p.chips);
-    });
-    gameObjects.push(...this.game.deck)
-    gameObjects.push(...this.game.communityCards)
-    return gameObjects;
   }
 
   displayPotSize() {
@@ -290,6 +305,23 @@ module.exports = class PokerGameController {
     );
   }
 
+  collectGameObjects() {
+    let gameObjects = [];
+    this.game.players.forEach(p => {
+      gameObjects.push(...p.cards);
+      gameObjects.push(...p.chips);
+    });
+    gameObjects.push(...this.game.deck)
+    gameObjects.push(...this.game.communityCards)
+    return gameObjects;
+  }
+
+  initGameObjects() {
+    let gameObjecs = this.collectGameObjects();
+    gameObjecs.forEach(g => {
+      this.objectController.calcRelPosProp(g);
+    })
+  }
 
   moveCommunityCards() {
     this.game.communityCards.forEach(card => {
@@ -326,13 +358,6 @@ module.exports = class PokerGameController {
         delay += 500;
       })
     }
-
-
-  }
-
-  stop() {
-    cancelAnimationFrame(this.raf);
-    this.raf = undefined;
   }
 
   setupCanvas() {

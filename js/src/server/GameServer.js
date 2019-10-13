@@ -49,8 +49,8 @@ module.exports = class GameServer {
         console.log(data);
       });
 
-      socket.on('newGame', data => {
-        this.game = new Game(data.canvas);
+      socket.on('newGame', () => {
+        this.game = new Game();
       });
 
       socket.on('playerJoin', data => {
@@ -83,10 +83,7 @@ module.exports = class GameServer {
             this.io.emit('msg',{msg:'all players were ready for 3 seconds'});
             // starting game here
             this.game.startNewGame();
-            this.io.emit('startGame', {
-              state: this.game.state,
-              player: this.game.players,
-            });
+            this.io.emit('startGame', this.game);
           }
         }, 4000);
       });

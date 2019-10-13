@@ -1,3 +1,5 @@
+const Card = require('./Card.js');
+
 module.exports = {
 
   COLOR: {
@@ -280,7 +282,12 @@ module.exports = {
     let port = parseInt(hostParams[1]);
     if (!port) return false;
     if (hostParams[0] !== '') return true;
-  }
+  },
+  toCard: card => {
+    let c = new Card();
+    Object.assign(c,card);
+    return c;
+  },
 
 }
 

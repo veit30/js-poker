@@ -29,4 +29,13 @@ module.exports = class GameObject {
 
     this.doneMoves = 0;
   }
+
+  setProps({x,y,rotation}) {
+    x = x || 0;
+    y = y || 0;
+    rtoation = rotation || 0;
+    this.x = x;
+    this.y = y;
+    this.rotation = rotation;
+  }
 }
