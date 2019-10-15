@@ -83,13 +83,14 @@ module.exports = class PokerGameController {
 
   renderGameObjects() {
     let gameObjects = [];
-    for (let player of this.game.players) {
-      gameObjects = gameObjects.concat(player.cards);
-    }
-    gameObjects = gameObjects
-      .concat([this.game.deck[0]])
-      // .concat(this.game.chips)
-      .concat(this.game.communityCards);
+    this.game.players.forEach(p => {
+      gameObjects.push(...p.cards);
+      gameObjects.push(...p.chips);
+    });
+    gameObjects.push(this.game.deck[0]);
+    gameObjects.push(...this.game.communityCards);
+    gameObjects.push(...this.game.chips);
+
     this.gameView.clear();
     this.gameView.renderDeckShadow(
       {
@@ -182,6 +183,7 @@ module.exports = class PokerGameController {
           if (!this.connectToServer) {
             this.inputView.state = 'menu';
             this.sendWarning(`Unable to connect to ${this.inputView.inputs.host}`, 'noConAlert');
+            // close connection from clientSocket to prevent reconnect
             this.raf = requestAnimationFrame(() => this.start());
           }
         }, 3000);
@@ -256,31 +258,30 @@ module.exports = class PokerGameController {
     });
     this.clientSocket.on('startGame', data => {
       this.inputView.state = 'ingame';
-      this.game = data;
-      console.log(this.game);
+      this.game = Game.toGame(data);
       this.game.players.forEach(p => {
-        let card1 = new Card();
-        Object.assign(card1,p.cards[0]);
-        console.log(card1);
-        console.log(card1.constructor.name);
-        // p.cards[0].setProps({
-        //   x: this.gameCanvas.width * .5,
-        //   y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
-        //   rotation: 0
-        // });
-        // p.cards[1].setProps({
-        //   x: this.gameCanvas.width * .5,
-        //   y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
-        //   rotation: 0
-        // });
+        p.cards[0] = Card.toCard(p.cards[0]);
+        p.cards[1] = Card.toCard(p.cards[1]);
+        p.cards[0].setProps({
+          x: this.gameCanvas.width * .5,
+          y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+          rotation: 0
+        });
+        p.cards[1].setProps({
+          x: this.gameCanvas.width * .5,
+          y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+          rotation: 0
+        });
       });
-      this.game.deck.forEach(c => {
+      this.game.deck = this.game.deck.map(c => {
+        c = Card.toCard(c);
         c.setProps({
           x: this.gameCanvas.width * .5,
           y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
           rotation: 0
         });
-      })
+        return c;
+      });
       // add right player positions
       console.log(this.game);
       this.initGameObjects();
@@ -353,7 +354,7 @@ module.exports = class PokerGameController {
           easing: 'ease-out',
           time: 500,
           delay: delay,
-          flipAfter: true
+          flipAfter: player.clientId === this.clientSocket.id ? true : false
         })
         delay += 500;
       })

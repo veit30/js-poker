@@ -9,7 +9,7 @@ module.exports = class Game {
     this.pot = 0;
     this.lastPot = 0;
     this.state = 'new'; // flop, turn, river, end
-    // this.chips = []
+    this.chips = []
   }
 
   startNewGame() {
@@ -25,8 +25,8 @@ module.exports = class Game {
     Object.keys(CARD_SUIT).forEach(suit => {
       Object.keys(CARD_VALUE).forEach(value => {
         card = new Card(
-          undefined,
-          undefined,
+          0,
+          0,
           0,
           CARD_SUIT[suit],
           CARD_VALUE[value]
@@ -104,6 +104,12 @@ module.exports = class Game {
 
   get potStr() {
     return numDots(this.pot);
+  }
+
+  static toGame(obj) {
+    let game = new Game();
+    Object.assign(game,obj);
+    return game;
   }
 
 }

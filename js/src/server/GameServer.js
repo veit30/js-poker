@@ -9,7 +9,7 @@ module.exports = class GameServer {
     this.server;
     this.game;
     this.io;
-    this.seatIndex = [0,1,2,3,4,5,6,7].map(a => [Math.random(),a])
+    this.seatIndex = [1,2,3,4,5,6,7].map(a => [Math.random(),a])
       .sort((a,b) => a[0]-b[0])
       .map(a => a[1]);
     this.readyTimeoutID;
@@ -54,7 +54,7 @@ module.exports = class GameServer {
       });
 
       socket.on('playerJoin', data => {
-        if (this.game.players.length === 8) {
+        if (this.game.players.length === 7) {
           this.socket.emit('returnPlayers', false);
         } else {
           let seat = this.seatIndex[this.game.players.length];

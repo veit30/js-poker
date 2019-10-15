@@ -14,4 +14,10 @@ module.exports = class Card extends GameObject {
     this.isFace = !this.isFace;
   }
 
+  static toCard(obj) {
+    let card = new Card();
+    Object.assign(card,obj);
+    return card;
+  }
+
 }

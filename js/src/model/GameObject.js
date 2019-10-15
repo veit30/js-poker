@@ -33,7 +33,7 @@ module.exports = class GameObject {
   setProps({x,y,rotation}) {
     x = x || 0;
     y = y || 0;
-    rtoation = rotation || 0;
+    rotation = rotation || 0;
     this.x = x;
     this.y = y;
     this.rotation = rotation;
