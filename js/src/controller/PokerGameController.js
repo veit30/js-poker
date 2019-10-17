@@ -258,6 +258,7 @@ module.exports = class PokerGameController {
     });
     this.clientSocket.on('startGame', data => {
       this.inputView.state = 'ingame';
+      this.inputView.reset();
       this.game = Game.toGame(data);
       this.game.players.forEach(p => {
         p.cards[0] = Card.toCard(p.cards[0]);
@@ -286,7 +287,8 @@ module.exports = class PokerGameController {
       console.log(this.game);
       this.initGameObjects();
       this.movePlayerCards();
-    })
+    });
+    // this.clientSocket.on('');
     this.clientSocket.on('connect', () => {
       this.connectToServer = true;
     });

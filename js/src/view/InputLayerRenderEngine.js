@@ -70,7 +70,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     let hover = false;
     if (this.state === 'ingame') {
       this.clear();
-      this.menuElements = [];
+      // this.menuElements = [];
     } else {
       this.renderBackground(COLOR.darkGrey);
     }
@@ -206,7 +206,6 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       }
     }
     alerts && this.menuElements.push(...alerts);
-
   }
 
   initStartCountdown() {
@@ -527,6 +526,103 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       parent.state = 'menu';
       parent.reset();
     });
+
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .20,
+      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.brown2,
+        hover : COLOR.brown,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'callButton',
+      'Call'
+    ), parent => {
+
+    });
+    // fold button
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .50,
+      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.brown2,
+        hover : COLOR.brown,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'foldButton',
+      'Fold'
+    ), parent => {
+
+    });
+
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .80,
+      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.brown2,
+        hover : COLOR.brown,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'raiseButton',
+      'Raise'
+    ), parent => {
+
+    });
+
+    this.addSlider()
+  }
+
+  loadIngameView() {
+    console.log("loaded ingame view");
+    this.menuElements = [];
+    // call button
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .45,
+      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.brown2,
+        hover : COLOR.brown,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'callButton',
+      'Call'
+    ), parent => {
+
+    });
+    // fold button
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .55,
+      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.brown2,
+        hover : COLOR.brown,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'foldButton',
+      'Fold'
+    ), parent => {
+
+    });
+    // raise button
+    //this.addButton();
+    // plus button
+    // minus button for raising
+    // maybe slider
   }
 
 }
