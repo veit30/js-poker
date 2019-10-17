@@ -8,6 +8,7 @@ const Label = require('../model/Label.js');
 const Text = require('../model/Text.js');
 const PlayerBar = require('../model/PlayerBar.js');
 const Countdown = require('../model/Countdown.js');
+const Slider = require('../model/Slider.js')
 const {COLOR, FONT, SVG_DATA, testHost} = require('../model/Utils.js');
 
 module.exports = class InputLayerRenderEngine extends RenderEngine {
@@ -36,6 +37,16 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     }, button.label);
 
     this.menuElements.push(button);
+  }
+
+  addSlider(slider, callback) {
+    this.inputHandler.bindOnDrag(ev => {
+      if (slider.intersect({x:ev.x,y:ev.y})) {
+        // console.log(`slider move ${slider.label}`);
+      };
+      callback(slider,{x:ev.x,y:ev.y});
+    }, slider.label)
+    this.menuElements.push(slider);
   }
 
   addInputField(inputField,callback) {
@@ -562,8 +573,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     });
 
     this.addButton(new TextButton(
-      this.ctx.canvas.width * .80,
-      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
+      this.ctx.canvas.width * .8,
+      this.ctx.canvas.height - this.ctx.canvas.width * .1,
       this.ctx.canvas.width * .25,
       this.ctx.canvas.width * .05,
       {
@@ -578,7 +589,17 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
 
     });
 
-    this.addSlider()
+    this.addSlider(new Slider(
+      this.ctx.canvas.width * .9,
+      this.ctx.canvas.height * .8,
+      this.ctx.canvas.height * .5,
+      this.ctx.canvas.width * .05,
+      'vertical',
+      'raiseSlider'
+    ), (self,mouse) => {
+      self.moveTo(mouse);
+      console.log(self.value);
+    });
   }
 
   loadIngameView() {

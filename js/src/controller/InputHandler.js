@@ -11,11 +11,13 @@ module.exports = class InputHandler {
       y:0
     }
 
+    this.mousedown = false;
+
     this.lastAsk = Date.now();
 
-    //this.clickActions = [];
-    // need to be map to delete bindings, when not shown
     this.clickActions = {};
+
+    this.dragActions = {};
 
     window.addEventListener('keydown', event => {
       event.preventDefault();
@@ -36,7 +38,17 @@ module.exports = class InputHandler {
     window.addEventListener('mousemove', event => {
       this.cursor.x = event.clientX;
       this.cursor.y = event.clientY;
-    })
+      // some more stuff for sliders
+      if (this.mousedown) {
+        Object.keys(this.dragActions).forEach(key => {
+          try {
+            this.dragActions[key]({x: event.clientX, y: event.clientY});
+          } catch (error) {
+            // action was deleted
+          }
+        });
+      }
+    });
 
     window.addEventListener('click', event => {
       Object.keys(this.clickActions).forEach(key => {
@@ -45,8 +57,18 @@ module.exports = class InputHandler {
         } catch (error) {
           // action was deleted
         }
-      })
-    })
+      });
+    });
+
+    window.addEventListener('mousedown', event => {
+      this.mousedown = true;
+      console.log('mousedown');
+    });
+
+    window.addEventListener('mouseup', event => {
+      this.mousedown = false;
+      console.log('mouseup');
+    });
   }
 
   getPressedKey() {
@@ -81,6 +103,14 @@ module.exports = class InputHandler {
 
   deleteClickEventBinding(name) {
     delete this.clickActions[name];
+  }
+
+  bindOnDrag(fn, name) {
+    this.dragActions[name] = fn;
+  }
+
+  deleteDragEvent(name) {
+    delete this.dragActions[name];
   }
 
 }

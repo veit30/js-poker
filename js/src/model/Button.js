@@ -5,7 +5,7 @@ module.exports = class Button {
     this.width = width;
     this.height = height;
     this.colors = colors;
-    this.label = label;
+    this.label = label || Math.random().toString(36).substring(7);;
   }
 
   intersect({x,y}) {
