@@ -2,11 +2,11 @@ module.exports = class Label {
   constructor(x,y,text,size,color,align,label) {
     this.x = x;
     this.y = y;
+    this.text = text;
     this.size = size;
     this.color = color;
     this.align = ['start','end','left','center','right'].includes(align) ? align : 'center';
-    this.text = text;
-    this.label = label || 'none';
+    this.label = label || Math.random().toString(36).substring(7);
   }
 
   render(ctx) {

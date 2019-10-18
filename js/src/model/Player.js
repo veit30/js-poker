@@ -19,4 +19,10 @@ module.exports = class Player {
   notReady() {
     this.ready = false;
   }
+
+  static toPlayer(obj) {
+    let player = new Player();
+    Object.assign(player,obj);
+    return player;
+  }
 }

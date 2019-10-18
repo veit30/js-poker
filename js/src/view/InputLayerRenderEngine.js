@@ -24,6 +24,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     this.players;
     this.pointing = false;
     this.readyState = false;
+    this.playerId;
     this.reset();
   }
 
@@ -589,17 +590,46 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
 
     });
 
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .9,
+      this.ctx.canvas.height - this.ctx.canvas.width * .15,
+      0,
+      this.ctx.canvas.width * 0.05,
+      COLOR.white,
+      'center',
+      'raiseSize'
+    ));
+
     this.addSlider(new Slider(
       this.ctx.canvas.width * .9,
-      this.ctx.canvas.height * .8,
+      this.ctx.canvas.height - this.ctx.canvas.width * .2,
       this.ctx.canvas.height * .5,
       this.ctx.canvas.width * .05,
       'vertical',
       'raiseSlider'
     ), (self,mouse) => {
       self.moveTo(mouse);
-      console.log(self.value);
+      // bind label to this
+      // let ownPlayer = this.players.filter(p => p.clientId === this.playerId)[0];
+      // if (ownPlayer) {
+      //   this.menuElements.forEach(me => {
+      //     if (me.label === 'raiseSize') {
+      //       me.text = Math.floor(Math.floor(self.value) * ownPlayer.money);
+      //     }
+      //   });
+      // }
+      this.menuElements.forEach(me => {
+        if (me.label === 'raiseSize') {
+          if(self.value === 1) {
+            me.text = 'All-In';
+          } else {
+            me.text = Math.floor(self.value * 630);
+          }
+        }
+      });
+
     });
+
   }
 
   loadIngameView() {

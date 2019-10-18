@@ -177,17 +177,18 @@ module.exports = class PokerGameController {
       } else if (this.inputView.connectionMethod === 'join') {
         this.inputView.connectionMethod = '';
         this.clientSocket = io(`http://${this.inputView.inputs.host}`);
-        // wait for max of 3 sec for a connection to happen
         this.addSocketHandlers();
         setTimeout(() => {
           if (!this.connectToServer) {
             this.inputView.state = 'menu';
             this.sendWarning(`Unable to connect to ${this.inputView.inputs.host}`, 'noConAlert');
-            // close connection from clientSocket to prevent reconnect
+            // TODO close connection from clientSocket to prevent reconnect
+            // TODO
             this.raf = requestAnimationFrame(() => this.start());
           }
         }, 3000);
         this.clientSocket.emit('playerJoin',{name:this.inputView.inputs.name});
+        this.inputView.playerId = this.clientSocket.id;
       }
       // everytime else
       if (this.inputView.readyState && !this.clientReadyState) {
@@ -254,7 +255,8 @@ module.exports = class PokerGameController {
       } else if (!allReady) {
         this.inputView.abordStartCountdown();
       }
-      this.inputView.players = data.players;
+      let players = data.players.map(p => Player.toPlayer(p));
+      this.inputView.players = players;
     });
     this.clientSocket.on('startGame', data => {
       this.inputView.state = 'ingame';

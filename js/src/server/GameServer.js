@@ -1,6 +1,7 @@
 const http = require('http');
 const sio = require('socket.io');
 const Game = require('../model/Game.js');
+const Chip = require('../model/Chip.js');
 const Player = require('../model/Player.js');
 
 module.exports = class GameServer {
