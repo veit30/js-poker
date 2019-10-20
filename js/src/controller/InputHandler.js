@@ -19,6 +19,10 @@ module.exports = class InputHandler {
 
     this.dragActions = {};
 
+    this.mouseDownActions = {};
+
+    this.onTarget = {};
+
     window.addEventListener('keydown', event => {
       event.preventDefault();
       this.keyBuffer.push({
@@ -42,7 +46,9 @@ module.exports = class InputHandler {
       if (this.mousedown) {
         Object.keys(this.dragActions).forEach(key => {
           try {
-            this.dragActions[key]({x: event.clientX, y: event.clientY});
+            if (this.onTarget[key]) {
+              this.dragActions[key]({x: event.clientX, y: event.clientY});
+            }
           } catch (error) {
             // action was deleted
           }
@@ -62,12 +68,17 @@ module.exports = class InputHandler {
 
     window.addEventListener('mousedown', event => {
       this.mousedown = true;
-      console.log('mousedown');
+      Object.keys(this.mouseDownActions).forEach(key => {
+        if (this.mouseDownActions[key](this.cursor)) {
+          this.onTarget[key] = true;
+        }
+      })
+      this.mouseDownOn
     });
 
     window.addEventListener('mouseup', event => {
       this.mousedown = false;
-      console.log('mouseup');
+      this.onTarget = {};
     });
   }
 
@@ -111,6 +122,10 @@ module.exports = class InputHandler {
 
   deleteDragEvent(name) {
     delete this.dragActions[name];
+  }
+
+  bindOnMouseDown(fn, name) {
+    this.mouseDownActions[name] = fn;
   }
 
 }

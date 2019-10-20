@@ -23,7 +23,13 @@ module.exports = {
     buttonGreen: '#64bd5e',
     buttonGreenHover: '#97d194',
     buttonGray: '#8b8b8b',
-    buttonGrayHover: '#9fbf9c'
+    buttonGrayHover: '#9fbf9c',
+    chipGrey: '#969696',
+    chipGreen: '#4aac57',
+    chipRed: '#c94949',
+    chipYellow: '#dedc4d',
+    chipPurple: '#774bd5',
+    chipBlue: '#3886cd'
   },
   CARD_SUIT: {
     DIAMONDS: 1,
@@ -70,17 +76,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .063,
-            y: canvas.height * .5 -  (canvas.width * .4) * .35
+            x: canvas.width * .5 - (canvas.width * .4) * .063,
+            y: canvas.height * .5 - (canvas.width * .4) * .35
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .063,
-            y: canvas.height * .5 -  (canvas.width * .4) * .35
+            x: canvas.width * .5 + (canvas.width * .4) * .063,
+            y: canvas.height * .5 - (canvas.width * .4) * .35
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5,
+          y: canvas.height * .5 - (canvas.width * .4) * .6
+        }
+      },
       positionName: 'Upper Middle (DEALER)',
       cardRotation: 180
     },
@@ -88,17 +100,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .652,
-            y: canvas.height * .5 -  (canvas.width * .4) * .265
+            x: canvas.width * .5 + (canvas.width * .4) * .652,
+            y: canvas.height * .5 - (canvas.width * .4) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .548,
-            y: canvas.height * .5 -  (canvas.width * .4) * .335
+            x: canvas.width * .5 + (canvas.width * .4) * .548,
+            y: canvas.height * .5 - (canvas.width * .4) * .335
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5 + (canvas.width * .4) * .83,
+          y: canvas.height * .5 - (canvas.width * .4) * .5
+        }
+      },
       positionName: 'Upper Right',
       cardRotation: -145
     },
@@ -106,17 +124,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .8,
-            y: canvas.height * .5 -  (canvas.width * .4) * .063
+            x: canvas.width * .5 + (canvas.width * .4) * .8,
+            y: canvas.height * .5 - (canvas.width * .4) * .063
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .8,
-            y: canvas.height * .5 +  (canvas.width * .4) * .063
+            x: canvas.width * .5 + (canvas.width * .4) * .8,
+            y: canvas.height * .5 + (canvas.width * .4) * .063
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5 + (canvas.width * .4) * 1.1,
+          y: canvas.height * .5
+        }
+      },
       positionName: 'Center Right',
       cardRotation: -90
     },
@@ -124,17 +148,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .652,
-            y: canvas.height * .5 +  (canvas.width * .4) * .265
+            x: canvas.width * .5 + (canvas.width * .4) * .652,
+            y: canvas.height * .5 + (canvas.width * .4) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .548,
-            y: canvas.height * .5 +  (canvas.width * .4) * .335
+            x: canvas.width * .5 + (canvas.width * .4) * .548,
+            y: canvas.height * .5 + (canvas.width * .4) * .335
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5 + (canvas.width * .4) * .83,
+          y: canvas.height * .5 + (canvas.width * .4) * .5
+        }
+      },
       positionName: 'Lower Right',
       cardRotation: -35
     },
@@ -142,17 +172,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .063,
-            y: canvas.height * .5 +  (canvas.width * .4) * .35
+            x: canvas.width * .5 - (canvas.width * .4) * .063,
+            y: canvas.height * .5 + (canvas.width * .4) * .35
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 +  (canvas.width * .4) * .063,
-            y: canvas.height * .5 +  (canvas.width * .4) * .35
+            x: canvas.width * .5 + (canvas.width * .4) * .063,
+            y: canvas.height * .5 + (canvas.width * .4) * .35
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5,
+          y: canvas.height * .5 + (canvas.width * .4) * .6
+        }
+      },
       positionName: 'Lower Middle',
       cardRotation: 0
     },
@@ -160,17 +196,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .652,
-            y: canvas.height * .5 +  (canvas.width * .4) * .265
+            x: canvas.width * .5 - (canvas.width * .4) * .652,
+            y: canvas.height * .5 + (canvas.width * .4) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .548,
-            y: canvas.height * .5 +  (canvas.width * .4) * .335
+            x: canvas.width * .5 - (canvas.width * .4) * .548,
+            y: canvas.height * .5 + (canvas.width * .4) * .335
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5 - (canvas.width * .4) * .83,
+          y: canvas.height * .5 + (canvas.width * .4) * .5
+        }
+      },
       positionName: 'Lower Left',
       cardRotation: 35
     },
@@ -178,17 +220,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .8,
-            y: canvas.height * .5 -  (canvas.width * .4) * .063
+            x: canvas.width * .5 - (canvas.width * .4) * .8,
+            y: canvas.height * .5 - (canvas.width * .4) * .063
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .8,
-            y: canvas.height * .5 +  (canvas.width * .4) * .063
+            x: canvas.width * .5 - (canvas.width * .4) * .8,
+            y: canvas.height * .5 + (canvas.width * .4) * .063
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5 - (canvas.width * .4) * 1.1,
+          y: canvas.height * .5,
+        }
+      },
       positionName: 'Center Left',
       cardRotation: 90
     },
@@ -196,17 +244,23 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .652,
-            y: canvas.height * .5 -  (canvas.width * .4) * .265
+            x: canvas.width * .5 - (canvas.width * .4) * .652,
+            y: canvas.height * .5 - (canvas.width * .4) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 -  (canvas.width * .4) * .548,
-            y: canvas.height * .5 -  (canvas.width * .4) * .335
+            x: canvas.width * .5 - (canvas.width * .4) * .548,
+            y: canvas.height * .5 - (canvas.width * .4) * .335
           };
         }
       ],
+      avatar: canvas => {
+        return {
+          x: canvas.width * .5 - (canvas.width * .4) * .83,
+          y: canvas.height * .5 - (canvas.width * .4) * .5
+        }
+      },
       positionName: 'Upper Left',
       cardRotation: 145
     },

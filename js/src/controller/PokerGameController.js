@@ -255,13 +255,15 @@ module.exports = class PokerGameController {
       } else if (!allReady) {
         this.inputView.abordStartCountdown();
       }
-      let players = data.players.map(p => Player.toPlayer(p));
+      let players = data.players.map(Player.toPlayer);
       this.inputView.players = players;
     });
     this.clientSocket.on('startGame', data => {
       this.inputView.state = 'ingame';
       this.inputView.reset();
       this.game = Game.toGame(data);
+      this.game.reorderPlayerPositonsTo(this.clientSocket.id);
+      this.game.players = this.game.players.map(Player.toPlayer);
       this.game.players.forEach(p => {
         p.cards[0] = Card.toCard(p.cards[0]);
         p.cards[1] = Card.toCard(p.cards[1]);
@@ -275,6 +277,15 @@ module.exports = class PokerGameController {
           y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
           rotation: 0
         });
+        let avatarPos = PLAYER_POSITION[p.positionId].avatar(this.gameView);
+        p.chips.forEach((c,i) => {
+          p.chips[i] = Chip.toChip(c);
+          p.chips[i].setProps({
+            x: avatarPos.x,
+            y: avatarPos.y,
+            rotation: 0,
+          })
+        })
       });
       this.game.deck = this.game.deck.map(c => {
         c = Card.toCard(c);
@@ -287,8 +298,10 @@ module.exports = class PokerGameController {
       });
       // add right player positions
       console.log(this.game);
+      this.inputView.players = this.game.players;
       this.initGameObjects();
       this.movePlayerCards();
+      this.displayPotSize();
     });
     // this.clientSocket.on('');
     this.clientSocket.on('connect', () => {

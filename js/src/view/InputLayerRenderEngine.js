@@ -8,8 +8,9 @@ const Label = require('../model/Label.js');
 const Text = require('../model/Text.js');
 const PlayerBar = require('../model/PlayerBar.js');
 const Countdown = require('../model/Countdown.js');
-const Slider = require('../model/Slider.js')
-const {COLOR, FONT, SVG_DATA, testHost} = require('../model/Utils.js');
+const Slider = require('../model/Slider.js');
+const Avatar = require('../model/Avatar.js');
+const {COLOR, FONT, SVG_DATA, testHost, PLAYER_POSITION} = require('../model/Utils.js');
 
 module.exports = class InputLayerRenderEngine extends RenderEngine {
   constructor(ctx,inputHandler) {
@@ -40,13 +41,14 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     this.menuElements.push(button);
   }
 
-  addSlider(slider, callback) {
+  addSlider(slider, dragCallback) {
     this.inputHandler.bindOnDrag(ev => {
       if (slider.intersect({x:ev.x,y:ev.y})) {
         // console.log(`slider move ${slider.label}`);
       };
-      callback(slider,{x:ev.x,y:ev.y});
-    }, slider.label)
+      dragCallback(slider,{x:ev.x,y:ev.y});
+    }, slider.label);
+    this.inputHandler.bindOnMouseDown(ev => slider.intersect({x:ev.x,y:ev.y}), slider.label);
     this.menuElements.push(slider);
   }
 
@@ -635,9 +637,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
   loadIngameView() {
     console.log("loaded ingame view");
     this.menuElements = [];
-    // call button
     this.addButton(new TextButton(
-      this.ctx.canvas.width * .45,
+      this.ctx.canvas.width * .20,
       this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
       this.ctx.canvas.width * .25,
       this.ctx.canvas.width * .05,
@@ -652,9 +653,8 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     ), parent => {
 
     });
-    // fold button
     this.addButton(new TextButton(
-      this.ctx.canvas.width * .55,
+      this.ctx.canvas.width * .50,
       this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
       this.ctx.canvas.width * .25,
       this.ctx.canvas.width * .05,
@@ -669,11 +669,63 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     ), parent => {
 
     });
-    // raise button
-    //this.addButton();
-    // plus button
-    // minus button for raising
-    // maybe slider
+
+    this.addButton(new TextButton(
+      this.ctx.canvas.width * .8,
+      this.ctx.canvas.height - this.ctx.canvas.width * .1,
+      this.ctx.canvas.width * .25,
+      this.ctx.canvas.width * .05,
+      {
+        idle : COLOR.brown2,
+        hover : COLOR.brown,
+        stroke : COLOR.white,
+        text : COLOR.white
+      },
+      'raiseButton',
+      'Raise'
+    ), parent => {
+
+    });
+
+    this.menuElements.push(new Label(
+      this.ctx.canvas.width * .9,
+      this.ctx.canvas.height - this.ctx.canvas.width * .15,
+      0,
+      this.ctx.canvas.width * 0.05,
+      COLOR.white,
+      'center',
+      'raiseSize'
+    ));
+
+    this.addSlider(new Slider(
+      this.ctx.canvas.width * .9,
+      this.ctx.canvas.height - this.ctx.canvas.width * .2,
+      this.ctx.canvas.height * .5,
+      this.ctx.canvas.width * .05,
+      'vertical',
+      'raiseSlider'
+    ), (self,mouse) => {
+      self.moveTo(mouse);
+      // bind label to this
+      // let ownPlayer = this.players.filter(p => p.clientId === this.playerId)[0];
+      // if (ownPlayer) {
+      //   this.menuElements.forEach(me => {
+      //     if (me.label === 'raiseSize') {
+      //       me.text = Math.floor(Math.floor(self.value) * ownPlayer.money);
+      //     }
+      //   });
+      // }
+      this.menuElements.forEach(me => {
+        if (me.label === 'raiseSize') {
+          if(self.value === 1) {
+            me.text = 'All-In';
+          } else {
+            me.text = Math.floor(self.value * 630);
+          }
+        }
+      });
+    });
+
   }
 
 }

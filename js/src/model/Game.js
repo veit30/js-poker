@@ -1,5 +1,6 @@
 const {CARD_VALUE, CARD_SUIT, numDots} = require('./Utils.js');
 const Card = require('./Card.js');
+const Chip = require('./Chip.js');
 
 module.exports = class Game {
   constructor() {
@@ -15,8 +16,93 @@ module.exports = class Game {
   startNewGame() {
     this.generateDeck();
     this.shuffleDeck();
+    this.sortPlayers();
     this.dealPlayercards();
+    this.addStartChips({
+      100: 7,
+      50: 5,
+      25: 5,
+      10: 10,
+      5: 15
+    });
+    this.assignBlinds();
     this.state = 'new';
+  };
+
+  startNewRound() {
+    this.resetGame();
+    this.generateDeck();
+    this.shuffleDeck();
+    this.dealPlayercards();
+    this.rotateBlinds();
+    this.state = 'new';
+  }
+
+  resetGame() {
+    this.communityCards = [];
+    this.lastPot = this.pot;
+    this.pot = 0;
+    this.chips = [];
+    this.players = this.players.map(p => {
+      p.cards = [];
+      return p;
+    })
+  }
+
+  assignBlinds() {
+    let randNum = Math.floor(Math.random() * this.players.length);
+    this.players[randNum].blind = 'small';
+    if ((randNum + 1) >= this.players.length) {
+      this.players[0].blind = 'big';
+    } else {
+      this.players[++randNum].blind = 'big';
+    }
+  }
+
+  rotateBlinds() {
+    let blindIndex;
+    this.players.forEach((p,i) => {
+      if (p.blind = 'small') {
+        blindIndex = i;
+        this.players[i].blind = 'none';
+      }
+      if (p.blind = 'big') {
+        this.players[i].blind = 'none';
+      }
+    });
+    let flag = false;
+    ['small','big'].forEach(b => {
+      while (!flag) {
+        ++blindIndex;
+        if(blindIndex < this.players.length) {
+          if (!this.players[blindIndex].broke) {
+            this.players[blindIndex].blind = b;
+            flag = true;
+          }
+        } else {
+          blindIndex = 0;
+          continue;
+        }
+      }
+      flag = false;
+    });
+
+  }
+
+  sortPlayers() {
+    this.players = this.players.sort((a,b) => a.positionId - b.positionId);
+  }
+
+  addStartChips(chipAmounts) {
+    this.players = this.players.map(p => {
+      Object.keys(chipAmounts).forEach(key => {
+        let c = chipAmounts[key];
+        while(c-- > 0) {
+          p.chips.push(new Chip(0,0,0,parseInt(key)));
+        }
+      });
+      return p;
+    });
   }
 
   generateDeck() {
@@ -104,6 +190,23 @@ module.exports = class Game {
 
   get potStr() {
     return numDots(this.pot);
+  }
+
+  // TODO needs test
+  reorderPlayerPositonsTo(playerId) {
+    let seat = this.players.find(p => p.clientId === playerId).positionId;
+    let offset = 4 - seat;
+    if (offset === 0) return;
+    if (offset < 0) {
+      offset = 7 + offset;
+    }
+    this.players.map(p => {
+      let oldseat = p.positionId;
+      let newSeat = oldseat + offset;
+      if (newSeat > 7) newSeat = newSeat % 8 + 1;
+      p.positionId = newSeat;
+      return p;
+    });
   }
 
   static toGame(obj) {

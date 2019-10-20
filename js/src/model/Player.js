@@ -6,6 +6,8 @@ module.exports = class Player {
     this.cards = [];
     this.chips = [];
     this.ready = false;
+    this.blind = 'none'; //big, small
+    this.broke = false;
   }
 
   get money() {
