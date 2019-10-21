@@ -12,7 +12,7 @@ const GameServer = require('../server/GameServer.js');
 const SwitchTextButton = require('../model/SwitchTextButton.js');
 const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
-  playersCardPosition, toCard
+  playersCardPosition, playersAvatarPosition, toCard
 } = require('../model/Utils.js');
 const io = require('socket.io-client');
 
@@ -301,6 +301,7 @@ module.exports = class PokerGameController {
       this.inputView.players = this.game.players;
       this.initGameObjects();
       this.movePlayerCards();
+      this.movePlayerChips();
       this.displayPotSize();
     });
     // this.clientSocket.on('');
@@ -359,14 +360,15 @@ module.exports = class PokerGameController {
 
   movePlayerCards() {
     let delay = 500;
-    let card;
+    let card, cardPos;
 
     for(let i = 0; i < 2; i++) {
       this.game.players.forEach(player => {
         card = player.cards[i];
+        cardPos = playersCardPosition(player.positionId,i,this.gameCanvas);
         this.objectController.addMove(card,{
-          xd: playersCardPosition(player.positionId,i,this.gameCanvas).x,
-          yd: playersCardPosition(player.positionId,i,this.gameCanvas).y,
+          xd: cardPos.x,
+          yd: cardPos.y,
           rotation: playersCardRotation(player.positionId),
           easing: 'ease-out',
           time: 500,
@@ -376,6 +378,34 @@ module.exports = class PokerGameController {
         delay += 500;
       })
     }
+  }
+
+  moveChips() {
+    let delay = 100;
+    let chip;
+
+    this.game.players.forEach(p => {
+      let bet = p.lastBet;
+      let chips = this.game.moneyToChips(bet);
+      let avatarPos = playersAvatarPosition(p.positionId,this.gameView);
+      p.chips.push(..chips);
+      p.chips.forEach(c => {
+        c.addProps({
+          x: avatarPos.x,
+          y: avatarPos.y,
+          rotation: 0
+        })
+        this.objectController.addMove(c, {
+          xd: , //chipposition in abh von chipNr
+          yd: , //chippos in abh von chipNr
+          rotation: 0,
+          easing: 'ease-out',
+          time: 200,
+          delay: delay
+        });
+        delay += 100;
+      })
+    })
   }
 
   setupCanvas() {

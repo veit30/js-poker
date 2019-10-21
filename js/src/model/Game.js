@@ -1,4 +1,4 @@
-const {CARD_VALUE, CARD_SUIT, numDots} = require('./Utils.js');
+const {CARD_VALUE, CARD_SUIT, numDots, COLOR} = require('./Utils.js');
 const Card = require('./Card.js');
 const Chip = require('./Chip.js');
 
@@ -10,7 +10,12 @@ module.exports = class Game {
     this.pot = 0;
     this.lastPot = 0;
     this.state = 'new'; // flop, turn, river, end
-    this.chips = []
+    this.chips = [];
+    this.chipTypes = {};
+    this.blinds = {
+      small: 0,
+      big: 0
+    };
   }
 
   startNewGame() {
@@ -18,14 +23,17 @@ module.exports = class Game {
     this.shuffleDeck();
     this.sortPlayers();
     this.dealPlayercards();
-    this.addStartChips({
-      100: 7,
-      50: 5,
-      25: 5,
-      10: 10,
-      5: 15
-    });
+    this.chipTypes = {
+      100: COLOR.chipPurple,
+      50: COLOR.chipBlue,
+      25: COLOR.chipGreen,
+      10: COLOR.chipGrey,
+      5: COLOR.chipRed
+    };
+    this.assignMoney(2500);
+    this.blinds.small = 5;
     this.assignBlinds();
+    this.payBlinds();
     this.state = 'new';
   };
 
@@ -36,6 +44,22 @@ module.exports = class Game {
     this.dealPlayercards();
     this.rotateBlinds();
     this.state = 'new';
+  }
+
+  payBlinds() {
+    let moneyAfterBlind;
+    this.players.forEach(p => {
+      if (p.blind === 'small' || p.blind === 'big') {
+        moneyAfterBlind = p.money - this.blind[p.blind];
+        if (moneyAfterBlind < 0) {
+          p.lastBet = p.money;
+          p.money = 0;
+        } else {
+          p.lastBet = this.blind[p.blind];
+          p.money = moneyAfterBlind;
+        }
+      }
+    })
   }
 
   resetGame() {
@@ -71,6 +95,7 @@ module.exports = class Game {
       }
     });
     let flag = false;
+    if (!this.players.find(p => !p.broke)) return;
     ['small','big'].forEach(b => {
       while (!flag) {
         ++blindIndex;
@@ -93,16 +118,10 @@ module.exports = class Game {
     this.players = this.players.sort((a,b) => a.positionId - b.positionId);
   }
 
-  addStartChips(chipAmounts) {
-    this.players = this.players.map(p => {
-      Object.keys(chipAmounts).forEach(key => {
-        let c = chipAmounts[key];
-        while(c-- > 0) {
-          p.chips.push(new Chip(0,0,0,parseInt(key)));
-        }
-      });
-      return p;
-    });
+  assignMoney(val) {
+    this.players.forEach(p => {
+      p.money = val;
+    })
   }
 
   generateDeck() {
@@ -122,9 +141,20 @@ module.exports = class Game {
     });
   }
 
-  // this.canvas.width * .5,
-  // this.canvas.height * .5 - (this.canvas.width * .4) * .35,
-  // 0,
+  moneyToChips(money) {
+    let chips = [];
+    let left = money;
+    Object.keys(this.chipTypes)
+    .sort((a,b) => parseInt(b)-parseInt(a))
+    .forEach(ct => {
+      amount = Math.floor(left / parseInt(ct));
+      left = left % parseInt(ct);
+      while(amount-- > 0) {
+        chips.push(new Chip(0,0,0,ct,this.chipTypes[ct]));
+      }
+    });
+    return chips;
+  }
 
   shuffleDeck() {
     this.deck = this.deck

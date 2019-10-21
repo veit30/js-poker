@@ -5,14 +5,16 @@ module.exports = class Player {
     this.clientId = clientId;
     this.cards = [];
     this.chips = [];
+    this.money = 0;
     this.ready = false;
     this.blind = 'none'; //big, small
+    this.lastBet = 0;
     this.broke = false;
   }
 
-  get money() {
-    return this.chips.reduce((a,c) => {return a + c.value;},0);
-  }
+  // get money() {
+  //   return this.chips.reduce((a,c) => {return a + c.value;},0);
+  // }
 
   isReady() {
     this.ready = true;

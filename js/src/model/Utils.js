@@ -265,6 +265,7 @@ module.exports = {
       cardRotation: 145
     },
   ],
+  blindSignalPositionOffset:'', //TODO
   communityCardPosition: (canvas,index) => {
     let factor = .05;
     return {
@@ -335,6 +336,9 @@ module.exports = {
     let port = parseInt(hostParams[1]);
     if (!port) return false;
     if (hostParams[0] !== '') return true;
+  },
+  chipPos: (pIndex,cIndex) => {
+    //TODO
   }
 
 };
@@ -345,8 +349,12 @@ module.exports.playersCardRotation =  playerId => {
 };
 
 module.exports.playersCardPosition = (playerId,cardIndex,canvas) => {
-  return module.exports.PLAYER_POSITION[playerId].cards[cardIndex](canvas)
+  return module.exports.PLAYER_POSITION[playerId].cards[cardIndex](canvas);
 };
+
+module.export.playersAvatarPosition = (playerId, canvas) => {
+  return module.exports.PLAYER_POSTION[playerId].avatar(canvas);
+}
 
 module.exports.colorFromSuit = suit => {
   if (suit == 1 || suit == 2) {

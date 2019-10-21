@@ -112,7 +112,7 @@ module.exports = class GameObjectController {
 
     obj.delay = delay;
 
-    obj.flipAfter = flipAfter;
+    obj.flipAfter = flipAfter || false;
 
     switch(easing) {
       case 'ease-in': obj.eF = EASING_FUNCTION.easeIn;break;

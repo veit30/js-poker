@@ -2,10 +2,10 @@ const GameObject = require('./GameObject.js');
 const {COLOR} = require('./Utils.js');
 
 module.exports = class Chip extends GameObject {
-  constructor(x,y,rotation,value) {
+  constructor(x,y,rotation,value,color) {
     super(x,y,rotation);
     this.value = value;
-    this.color = {
+    this.color = color || {
       100: COLOR.chipPurple,
       50: COLOR.chipBlue,
       25: COLOR.chipGreen,
