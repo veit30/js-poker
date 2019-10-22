@@ -396,8 +396,8 @@ module.exports = class PokerGameController {
           rotation: 0
         })
         this.objectController.addMove(c, {
-          xd: , //chipposition in abh von chipNr
-          yd: , //chippos in abh von chipNr
+          xd: , //chipposition in abh von chipNr und playerseatid
+          yd: , //chippos in abh von chipNr und playerseatid
           rotation: 0,
           easing: 'ease-out',
           time: 200,

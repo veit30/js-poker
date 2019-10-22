@@ -54,10 +54,6 @@ module.exports = class GameRenderEngine extends RenderEngine {
     ctx.restore();
   }
 
-  renderActionChip() {
-
-  }
-
   renderCard(card) {
     card.isFace && this.renderCardFace(card) ||
       !card.isFace && this.renderCardBack(card);
