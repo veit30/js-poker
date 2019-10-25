@@ -10,9 +10,10 @@ const Text = require('../model/Text.js');
 const Game = require('../model/Game.js');
 const GameServer = require('../server/GameServer.js');
 const SwitchTextButton = require('../model/SwitchTextButton.js');
+const Avatar = require('../model/Avatar.js');
 const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
-  playersCardPosition, playersAvatarPosition, toCard
+  playersCardPosition, playersAvatarPosition, playersChipPosition, numDots, avatarWidth
 } = require('../model/Utils.js');
 const io = require('socket.io-client');
 
@@ -111,6 +112,7 @@ module.exports = class PokerGameController {
     let gameObjects = [];
     for (let player of this.game.players) {
       gameObjects = gameObjects.concat(player.cards);
+      gameObjects = gameObjects.concat(player.chips);
     }
     gameObjects = gameObjects
       .concat(this.game.deck)
@@ -139,6 +141,43 @@ module.exports = class PokerGameController {
   // basic game loop function
   async start() {
     this.inputView.renderMenu();
+    // let pos,rot,avatar,avatarPos;
+    // let chipAmount = 5;
+    // let colors = [COLOR.chipPurple,COLOR.chipRed,COLOR.chipBlue,COLOR.chipGrey,COLOR.chipGreen,COLOR.chipYellow]
+    // let cycle = 0;
+    // for(let i = 0; i < 8; i++) {
+    //   for(let j = 0; j < chipAmount; j++) {
+    //     pos = playersChipPosition(i,j,chipAmount,this.gameCanvas);
+    //     this.gameView.renderChip({
+    //       x: pos.x,
+    //       y: pos.y,
+    //       rotation: 0,
+    //       color: colors[cycle++]
+    //     });
+    //     if (cycle === 5) cycle = 0;
+    //   }
+    //   pos = playersCardPosition(i,0,this.gameCanvas);
+    //   rot = playersCardRotation(i);
+    //   this.gameView.renderCardBack({
+    //     x: pos.x,
+    //     y: pos.y,
+    //     rotation: rot,
+    //   })
+    //   pos = playersCardPosition(i,1,this.gameCanvas);
+    //   this.gameView.renderCardBack({
+    //     x: pos.x,
+    //     y: pos.y,
+    //     rotation: rot,
+    //   });
+    //   avatarPos = playersAvatarPosition(i,this.inputCanvas);
+    //   avatar = new Avatar(
+    //     avatarPos.x,
+    //     avatarPos.y,
+    //     avatarWidth(this.inputCanvas),
+    //   );
+    //   avatar.render(this.inputCanvas.getContext('2d'));
+    //
+    // }
     if (this.inputView.state === 'ingame') {
       // Keyboard inputs are only used for testing purposes for now
       if (this.inputHandler.askKeyPress(KEY.C)) {
@@ -259,11 +298,9 @@ module.exports = class PokerGameController {
       this.inputView.players = players;
     });
     this.clientSocket.on('startGame', data => {
-      this.inputView.state = 'ingame';
-      this.inputView.reset();
       this.game = Game.toGame(data);
-      this.game.reorderPlayerPositonsTo(this.clientSocket.id);
       this.game.players = this.game.players.map(Player.toPlayer);
+      this.game.reorderPlayerPositonsTo(this.clientSocket.id);
       this.game.players.forEach(p => {
         p.cards[0] = Card.toCard(p.cards[0]);
         p.cards[1] = Card.toCard(p.cards[1]);
@@ -277,15 +314,6 @@ module.exports = class PokerGameController {
           y: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
           rotation: 0
         });
-        let avatarPos = PLAYER_POSITION[p.positionId].avatar(this.gameView);
-        p.chips.forEach((c,i) => {
-          p.chips[i] = Chip.toChip(c);
-          p.chips[i].setProps({
-            x: avatarPos.x,
-            y: avatarPos.y,
-            rotation: 0,
-          })
-        })
       });
       this.game.deck = this.game.deck.map(c => {
         c = Card.toCard(c);
@@ -303,6 +331,8 @@ module.exports = class PokerGameController {
       this.movePlayerCards();
       this.movePlayerChips();
       this.displayPotSize();
+      this.inputView.state = 'ingame';
+      this.inputView.reset();
     });
     // this.clientSocket.on('');
     this.clientSocket.on('connect', () => {
@@ -315,10 +345,17 @@ module.exports = class PokerGameController {
 
   displayPotSize() {
     this.tableView.renderTable();
-    let potText = new Text(this.game.potStr,this.inputCanvas.width * .03,FONT.MAIN,undefined,undefined,'left');
+    let money = 0;
+    this.game.players.forEach(p => {
+      money += p.chipMoney
+    });
+    money += this.game.pot;
+    console.log(money);
+    console.log(numDots(money));
+    let potText = new Text(numDots(money),this.inputCanvas.width * .03,FONT.MAIN,undefined,undefined,'left');
     let width = potText.calcWidth(this.inputCanvas.getContext('2d'));
     this.tableView.renderText(
-      this.inputCanvas.width * .5 + ((this.inputCanvas.width * .08) - width * 1.15),
+      this.inputCanvas.width * .5 + ((this.inputCanvas.width * .08) - width * 1.3),
       this.inputCanvas.height *.5 - this.inputCanvas.width * .054,
       potText
     );
@@ -380,24 +417,26 @@ module.exports = class PokerGameController {
     }
   }
 
-  moveChips() {
+  movePlayerChips() {
     let delay = 100;
-    let chip;
+    let chips, chipPos, bet, avatarPos;
 
     this.game.players.forEach(p => {
-      let bet = p.lastBet;
-      let chips = this.game.moneyToChips(bet);
-      let avatarPos = playersAvatarPosition(p.positionId,this.gameView);
-      p.chips.push(..chips);
-      p.chips.forEach(c => {
-        c.addProps({
+      bet = p.lastBet;
+      chips = this.game.moneyToChips(bet);
+      console.log(chips);
+      avatarPos = playersAvatarPosition(p.positionId, this.gameCanvas);
+      p.chips.push(...chips);
+      p.chips.forEach((c,i) => {
+        chipPos = playersChipPosition(p.positionId,i,chips.length,this.gameCanvas);
+        c.setProps({
           x: avatarPos.x,
           y: avatarPos.y,
           rotation: 0
-        })
+        });
         this.objectController.addMove(c, {
-          xd: , //chipposition in abh von chipNr und playerseatid
-          yd: , //chippos in abh von chipNr und playerseatid
+          xd: chipPos.x,
+          yd: chipPos.y,
           rotation: 0,
           easing: 'ease-out',
           time: 200,
@@ -406,6 +445,7 @@ module.exports = class PokerGameController {
         delay += 100;
       })
     })
+
   }
 
   setupCanvas() {

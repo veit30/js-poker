@@ -2,7 +2,7 @@ const RenderEngine = require('./RenderEngine.js');
 const CardSymbol = require('./CardSymbol.js');
 const CardText = require('./CardText.js');
 const {
-  COLOR,SVG_DATA,colorFromSuit,textFromValue,convertToImg
+  COLOR,SVG_DATA,colorFromSuit,textFromValue,convertToImg,chipRadius
 } = require('../model/Utils.js');
 
 module.exports = class GameRenderEngine extends RenderEngine {
@@ -14,7 +14,7 @@ module.exports = class GameRenderEngine extends RenderEngine {
   renderChip({x,y,color,rotation}) {
     let
       ctx = this.ctx,
-      radius = ctx.canvas.width * .4 * .03;
+      radius = chipRadius(ctx.canvas);
     color = color || COLOR.red;
     ctx.save();
     ctx.fillStyle = color;

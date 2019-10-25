@@ -1,5 +1,5 @@
 module.exports = class Player {
-  constructor(name, positionId, clientId) {
+  constructor(name, positionId, clientId, avatar) {
     this.name = name;
     this.positionId = positionId;
     this.clientId = clientId;
@@ -10,6 +10,7 @@ module.exports = class Player {
     this.blind = 'none'; //big, small
     this.lastBet = 0;
     this.broke = false;
+    this.avatar = avatar || '#'+Math.floor(Math.random()*16777215).toString(16);
   }
 
   // get money() {
@@ -22,6 +23,10 @@ module.exports = class Player {
 
   notReady() {
     this.ready = false;
+  }
+
+  get chipMoney() {
+    return this.chips.reduce((a,c) => a+parseInt(c.value), 0);
   }
 
   static toPlayer(obj) {

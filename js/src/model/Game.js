@@ -21,6 +21,7 @@ module.exports = class Game {
   startNewGame() {
     this.generateDeck();
     this.shuffleDeck();
+    this.assignBlinds();
     this.sortPlayers();
     this.dealPlayercards();
     this.chipTypes = {
@@ -31,11 +32,15 @@ module.exports = class Game {
       5: COLOR.chipRed
     };
     this.assignMoney(2500);
-    this.blinds.small = 5;
-    this.assignBlinds();
+    this.setBlind(5);
     this.payBlinds();
     this.state = 'new';
   };
+
+  setBlind(val) {
+    this.blinds.small = val;
+    this.blinds.big = val * 2;
+  }
 
   startNewRound() {
     this.resetGame();
@@ -50,16 +55,17 @@ module.exports = class Game {
     let moneyAfterBlind;
     this.players.forEach(p => {
       if (p.blind === 'small' || p.blind === 'big') {
-        moneyAfterBlind = p.money - this.blind[p.blind];
+        moneyAfterBlind = p.money - this.blinds[p.blind];
         if (moneyAfterBlind < 0) {
           p.lastBet = p.money;
           p.money = 0;
         } else {
-          p.lastBet = this.blind[p.blind];
+          p.lastBet = this.blinds[p.blind];
           p.money = moneyAfterBlind;
         }
       }
-    })
+
+    });
   }
 
   resetGame() {
@@ -144,6 +150,7 @@ module.exports = class Game {
   moneyToChips(money) {
     let chips = [];
     let left = money;
+    let amount;
     Object.keys(this.chipTypes)
     .sort((a,b) => parseInt(b)-parseInt(a))
     .forEach(ct => {
@@ -216,10 +223,6 @@ module.exports = class Game {
         p.notReady();
       }
     });
-  }
-
-  get potStr() {
-    return numDots(this.pot);
   }
 
   // TODO needs test

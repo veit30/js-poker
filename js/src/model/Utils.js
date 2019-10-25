@@ -93,6 +93,12 @@ module.exports = {
           y: canvas.height * .5 - (canvas.width * .4) * .6
         }
       },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5,
+          y: canvas.height * .5 - (canvas.width * .4) * .6
+        }
+      },
       positionName: 'Upper Middle (DEALER)',
       cardRotation: 180
     },
@@ -113,8 +119,14 @@ module.exports = {
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .83,
-          y: canvas.height * .5 - (canvas.width * .4) * .5
+          x: canvas.width * .5 + (canvas.width * .4) * .76,
+          y: canvas.height * .5 - (canvas.width * .4) * .54
+        }
+      },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5 + (canvas.width * .4) * .5,
+          y: canvas.height * .5 - (canvas.width * .4) * .17
         }
       },
       positionName: 'Upper Right',
@@ -141,6 +153,12 @@ module.exports = {
           y: canvas.height * .5
         }
       },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5 + (canvas.width * .4) * .6,
+          y: canvas.height * .5
+        }
+      },
       positionName: 'Center Right',
       cardRotation: -90
     },
@@ -161,8 +179,14 @@ module.exports = {
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .83,
-          y: canvas.height * .5 + (canvas.width * .4) * .5
+          x: canvas.width * .5 + (canvas.width * .4) * .76,
+          y: canvas.height * .5 + (canvas.width * .4) * .54
+        }
+      },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5 + (canvas.width * .4) * .5,
+          y: canvas.height * .5 + (canvas.width * .4) * .17
         }
       },
       positionName: 'Lower Right',
@@ -189,6 +213,12 @@ module.exports = {
           y: canvas.height * .5 + (canvas.width * .4) * .6
         }
       },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5,
+          y: canvas.height * .5 + (canvas.width * .4) * .22
+        }
+      },
       positionName: 'Lower Middle',
       cardRotation: 0
     },
@@ -209,8 +239,14 @@ module.exports = {
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .83,
-          y: canvas.height * .5 + (canvas.width * .4) * .5
+          x: canvas.width * .5 - (canvas.width * .4) * .76,
+          y: canvas.height * .5 + (canvas.width * .4) * .54
+        }
+      },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5 - (canvas.width * .4) * .5,
+          y: canvas.height * .5 + (canvas.width * .4) * .17
         }
       },
       positionName: 'Lower Left',
@@ -237,6 +273,12 @@ module.exports = {
           y: canvas.height * .5,
         }
       },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5 - (canvas.width * .4) * .6,
+          y: canvas.height * .5
+        }
+      },
       positionName: 'Center Left',
       cardRotation: 90
     },
@@ -257,8 +299,14 @@ module.exports = {
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .83,
-          y: canvas.height * .5 - (canvas.width * .4) * .5
+          x: canvas.width * .5 - (canvas.width * .4) * .76,
+          y: canvas.height * .5 - (canvas.width * .4) * .54
+        }
+      },
+      chips: canvas => {
+        return {
+          x: canvas.width * .5 - (canvas.width * .4) * .5,
+          y: canvas.height * .5 - (canvas.width * .4) * .17
         }
       },
       positionName: 'Upper Left',
@@ -337,12 +385,18 @@ module.exports = {
     if (!port) return false;
     if (hostParams[0] !== '') return true;
   },
-  chipPos: (pIndex,cIndex) => {
-    //TODO
-  }
-
+  chipRadius: canvas => canvas.width * .4 * .03,
+  avatarWidth: canvas => canvas.width * .1,
 };
 
+module.exports.playersChipPosition = (pIndex,cIndex,cAmount,canvas) => {
+  let playerChipPos = module.exports.PLAYER_POSITION[pIndex].chips(canvas);
+  let cRadius = module.exports.chipRadius(canvas);
+  return {
+    x: playerChipPos.x,
+    y: playerChipPos.y - (cAmount < 10 ? (cRadius * .4) : cAmount < 20 ? (cRadius * .2) : (cRadius * .1)) * cIndex
+  };
+}
 
 module.exports.playersCardRotation =  playerId => {
   return module.exports.PLAYER_POSITION[playerId].cardRotation;
@@ -352,9 +406,9 @@ module.exports.playersCardPosition = (playerId,cardIndex,canvas) => {
   return module.exports.PLAYER_POSITION[playerId].cards[cardIndex](canvas);
 };
 
-module.export.playersAvatarPosition = (playerId, canvas) => {
-  return module.exports.PLAYER_POSTION[playerId].avatar(canvas);
-}
+module.exports.playersAvatarPosition = (playerId, canvas) => {
+  return module.exports.PLAYER_POSITION[playerId].avatar(canvas);
+};
 
 module.exports.colorFromSuit = suit => {
   if (suit == 1 || suit == 2) {
