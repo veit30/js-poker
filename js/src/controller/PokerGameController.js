@@ -11,9 +11,11 @@ const Game = require('../model/Game.js');
 const GameServer = require('../server/GameServer.js');
 const SwitchTextButton = require('../model/SwitchTextButton.js');
 const Avatar = require('../model/Avatar.js');
+const Label = require('../model/Label.js');
 const {
   COLOR, KEY, FONT, communityCardPosition, playersCardRotation,
-  playersCardPosition, playersAvatarPosition, playersChipPosition, numDots, avatarWidth
+  playersCardPosition, playersAvatarPosition, playersChipPosition, numDots, avatarWidth,
+  playersMoneyLabelProperties, playersNameLabelProperties
 } = require('../model/Utils.js');
 const io = require('socket.io-client');
 
@@ -141,7 +143,7 @@ module.exports = class PokerGameController {
   // basic game loop function
   async start() {
     this.inputView.renderMenu();
-    // let pos,rot,avatar,avatarPos;
+    // let pos,rot,avatar,avatarPos, moneyLabelProps, nameLabelProps, moneyLabel, nameLabel;
     // let chipAmount = 5;
     // let colors = [COLOR.chipPurple,COLOR.chipRed,COLOR.chipBlue,COLOR.chipGrey,COLOR.chipGreen,COLOR.chipYellow]
     // let cycle = 0;
@@ -174,9 +176,27 @@ module.exports = class PokerGameController {
     //     avatarPos.x,
     //     avatarPos.y,
     //     avatarWidth(this.inputCanvas),
+    //     COLOR.chipBlue
     //   );
     //   avatar.render(this.inputCanvas.getContext('2d'));
-    //
+    //   moneyLabelProps = playersMoneyLabelProperties(i,this.inputCanvas);
+    //   nameLabelProps = playersNameLabelProperties(i,this.inputCanvas);
+    //   moneyLabel = new Label(
+    //     moneyLabelProps.x,
+    //     moneyLabelProps.y,
+    //     '2500',
+    //     moneyLabelProps.size,
+    //     COLOR.white
+    //   );
+    //   moneyLabel.render(this.inputCanvas.getContext('2d'));
+    //   nameLabel = new Label(
+    //     nameLabelProps.x,
+    //     nameLabelProps.y,
+    //     'Player-' + i,
+    //     nameLabelProps.size,
+    //     COLOR.white
+    //   )
+    //   nameLabel.render(this.inputCanvas.getContext('2d'));
     // }
     if (this.inputView.state === 'ingame') {
       // Keyboard inputs are only used for testing purposes for now

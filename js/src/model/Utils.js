@@ -396,7 +396,29 @@ module.exports.playersChipPosition = (pIndex,cIndex,cAmount,canvas) => {
     x: playerChipPos.x,
     y: playerChipPos.y - (cAmount < 10 ? (cRadius * .4) : cAmount < 20 ? (cRadius * .2) : (cRadius * .1)) * cIndex
   };
-}
+};
+
+module.exports.playersAvatarPosition = (playerId, canvas) => {
+  return module.exports.PLAYER_POSITION[playerId].avatar(canvas);
+};
+
+module.exports.playersNameLabelProperties = (pId,canvas) => {
+  let avatarPos = module.exports.PLAYER_POSITION[pId].avatar(canvas);
+  return {
+    x: avatarPos.x,
+    y: avatarPos.y - (canvas.width * .04),
+    size: (canvas.width * .03)
+  }
+};
+
+module.exports.playersMoneyLabelProperties = (pId,canvas) => {
+  let avatarPos = module.exports.PLAYER_POSITION[pId].avatar(canvas);
+  return {
+    x: avatarPos.x,
+    y: avatarPos.y + (canvas.width * .04),
+    size: (canvas.width * .02)
+  }
+};
 
 module.exports.playersCardRotation =  playerId => {
   return module.exports.PLAYER_POSITION[playerId].cardRotation;
@@ -406,9 +428,6 @@ module.exports.playersCardPosition = (playerId,cardIndex,canvas) => {
   return module.exports.PLAYER_POSITION[playerId].cards[cardIndex](canvas);
 };
 
-module.exports.playersAvatarPosition = (playerId, canvas) => {
-  return module.exports.PLAYER_POSITION[playerId].avatar(canvas);
-};
 
 module.exports.colorFromSuit = suit => {
   if (suit == 1 || suit == 2) {

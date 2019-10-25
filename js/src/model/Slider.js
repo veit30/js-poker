@@ -43,7 +43,10 @@ module.exports = class Slider {
       ctx.stroke();
       // draw handler
     } else {
-
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.x + this.length, this.y);
+      ctx.stroke();
     }
 
     ctx.beginPath();
@@ -72,7 +75,7 @@ module.exports = class Slider {
     if (this.orientation === 'vertical') {
       this.sliderY = y > this.y ? this.y : y < (this.y - this.length) ? (this.y - this.length) : y;
     } else {
-
+      this.sliderX = x < this.x ? this.x : x > (this.x + this.length) ? (this.x + this.length) : x;
     }
   }
 }

@@ -10,7 +10,9 @@ const PlayerBar = require('../model/PlayerBar.js');
 const Countdown = require('../model/Countdown.js');
 const Slider = require('../model/Slider.js');
 const Avatar = require('../model/Avatar.js');
-const {COLOR, FONT, SVG_DATA, testHost, PLAYER_POSITION, playersAvatarPosition, avatarWidth} = require('../model/Utils.js');
+const {COLOR, FONT, SVG_DATA, testHost, PLAYER_POSITION, playersAvatarPosition,
+  avatarWidth, playersNameLabelProperties, playersMoneyLabelProperties
+} = require('../model/Utils.js');
 
 module.exports = class InputLayerRenderEngine extends RenderEngine {
   constructor(ctx,inputHandler) {
@@ -90,6 +92,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       this.clear();
     } else {
       this.renderBackground(COLOR.darkGrey);
+      // this.clear();
     }
     this.menuElements.forEach(me => {
       hover = me.intersect(this.inputHandler.cursor);
@@ -544,97 +547,6 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
       parent.reset();
     });
 
-    // this.addButton(new TextButton(
-    //   this.ctx.canvas.width * .20,
-    //   this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
-    //   this.ctx.canvas.width * .25,
-    //   this.ctx.canvas.width * .05,
-    //   {
-    //     idle : COLOR.brown2,
-    //     hover : COLOR.brown,
-    //     stroke : COLOR.white,
-    //     text : COLOR.white
-    //   },
-    //   'callButton',
-    //   'Call'
-    // ), parent => {
-    //
-    // });
-    // // fold button
-    // this.addButton(new TextButton(
-    //   this.ctx.canvas.width * .50,
-    //   this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
-    //   this.ctx.canvas.width * .25,
-    //   this.ctx.canvas.width * .05,
-    //   {
-    //     idle : COLOR.brown2,
-    //     hover : COLOR.brown,
-    //     stroke : COLOR.white,
-    //     text : COLOR.white
-    //   },
-    //   'foldButton',
-    //   'Fold'
-    // ), parent => {
-    //
-    // });
-    //
-    // this.addButton(new TextButton(
-    //   this.ctx.canvas.width * .8,
-    //   this.ctx.canvas.height - this.ctx.canvas.width * .1,
-    //   this.ctx.canvas.width * .25,
-    //   this.ctx.canvas.width * .05,
-    //   {
-    //     idle : COLOR.brown2,
-    //     hover : COLOR.brown,
-    //     stroke : COLOR.white,
-    //     text : COLOR.white
-    //   },
-    //   'raiseButton',
-    //   'Raise'
-    // ), parent => {
-    //
-    // });
-    //
-    // this.menuElements.push(new Label(
-    //   this.ctx.canvas.width * .9,
-    //   this.ctx.canvas.height - this.ctx.canvas.width * .15,
-    //   0,
-    //   this.ctx.canvas.width * 0.05,
-    //   COLOR.white,
-    //   'center',
-    //   'raiseSize'
-    // ));
-    //
-    // this.addSlider(new Slider(
-    //   this.ctx.canvas.width * .9,
-    //   this.ctx.canvas.height - this.ctx.canvas.width * .2,
-    //   this.ctx.canvas.height * .5,
-    //   this.ctx.canvas.width * .05,
-    //   'vertical',
-    //   'raiseSlider'
-    // ), (self,mouse) => {
-    //   self.moveTo(mouse);
-    //   // bind label to this
-    //   // let ownPlayer = this.players.filter(p => p.clientId === this.playerId)[0];
-    //   // if (ownPlayer) {
-    //   //   this.menuElements.forEach(me => {
-    //   //     if (me.label === 'raiseSize') {
-    //   //       me.text = Math.floor(Math.floor(self.value) * ownPlayer.money);
-    //   //     }
-    //   //   });
-    //   // }
-    //   this.menuElements.forEach(me => {
-    //     if (me.label === 'raiseSize') {
-    //       if(self.value === 1) {
-    //         me.text = 'All-In';
-    //       } else {
-    //         me.text = Math.floor(self.value * 630);
-    //       }
-    //     }
-    //   });
-    //
-    // });
-
   }
 
   loadIngameView() {
@@ -692,7 +604,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
 
     this.menuElements.push(new Label(
       this.ctx.canvas.width * .9,
-      this.ctx.canvas.height - this.ctx.canvas.width * .15,
+      this.ctx.canvas.height - this.ctx.canvas.width * .17,
       0,
       this.ctx.canvas.width * 0.05,
       COLOR.white,
@@ -701,11 +613,11 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     ));
 
     this.addSlider(new Slider(
-      this.ctx.canvas.width * .9,
-      this.ctx.canvas.height - this.ctx.canvas.width * .2,
-      this.ctx.canvas.height * .5,
+      this.ctx.canvas.width * .1,
+      this.ctx.canvas.height - this.ctx.canvas.width * .17,
+      this.ctx.canvas.width * .7,
       this.ctx.canvas.width * .05,
-      'vertical',
+      'horizontal',
       'raiseSlider'
     ), (self,mouse) => {
       self.moveTo(mouse);
@@ -728,16 +640,38 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         }
       });
     });
-    let avatarPos;
-
+    let avatarPos, moneyLabelProps, nameLabelProps;
     // player müssen nach reordering geupdatet werden
     this.players.forEach(p => {
       avatarPos = playersAvatarPosition(p.positionId,this.ctx.canvas);
+      moneyLabelProps = playersMoneyLabelProperties(p.positionId,this.ctx.canvas);
+      nameLabelProps = playersNameLabelProperties(p.positionId,this.ctx.canvas);
       this.addAvatar(new Avatar(
         avatarPos.x,
         avatarPos.y,
         avatarWidth(this.ctx.canvas),
         p.avatar
+      ));
+
+      this.menuElements.push(new Label(
+        nameLabelProps.x,
+        nameLabelProps.y,
+        p.name,
+        nameLabelProps.size,
+        COLOR.white,
+        'center',
+        'PlayerName-' + p.clientId,
+        true
+      ));
+      this.menuElements.push(new Label(
+        moneyLabelProps.x,
+        moneyLabelProps.y,
+        p.money,
+        moneyLabelProps.size,
+        COLOR.white,
+        'center',
+        'PlayerMoney-' + p.clientId,
+        true
       ));
     });
 
