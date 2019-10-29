@@ -10,6 +10,8 @@ module.exports = class Player {
     this.blind = 'none'; //big, small
     this.lastBet = 0;
     this.broke = false;
+    this.fold = false;
+    this.hasTurn = false;
     this.avatar = avatar || '#'+Math.floor(Math.random()*16777215).toString(16);
   }
 

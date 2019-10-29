@@ -43,7 +43,7 @@ module.exports = class GameServer {
     this.io.on('connection', socket => {
       console.log('user connected');
       console.log(socket.id);
-
+      socket.emit('confirmId', socket.id);
       socket.emit('addr', this.server.address());
 
       socket.on('msg', data => {
@@ -87,6 +87,29 @@ module.exports = class GameServer {
             this.io.emit('startGame', this.game);
           }
         }, 4000);
+      });
+
+      socket.on('call', () => {
+        if(this.game.callFrom(socket.id)) {
+          this.io.emit('playerCall', this.game);
+        } else {
+          socket.emit('callWarning');
+        }
+      });
+
+      socket.on('fold', () => {
+        this.game.foldFrom(socket.id);
+        io.emit('playerFold', this.game);
+      });
+
+      socket.on('check', () => {
+        this.game.checkFrom(socket.id);
+        io.emit('playerCheck', this.game);
+      });
+
+      socket.on('raise', money => {
+        this.game.raiseFrom(socket.id, money);
+        io.emit('playerRaise', this.game);
       });
 
       socket.on('playerNotReady', () => {

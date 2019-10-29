@@ -11,7 +11,7 @@ const Countdown = require('../model/Countdown.js');
 const Slider = require('../model/Slider.js');
 const Avatar = require('../model/Avatar.js');
 const {COLOR, FONT, SVG_DATA, testHost, PLAYER_POSITION, playersAvatarPosition,
-  avatarWidth, playersNameLabelProperties, playersMoneyLabelProperties
+  avatarWidth, playersNameLabelProperties, playersMoneyLabelProperties, tableHeight, playersChipLabelProperties
 } = require('../model/Utils.js');
 
 module.exports = class InputLayerRenderEngine extends RenderEngine {
@@ -25,10 +25,21 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     this.inputs = {}; // can have host and name
     this.alert = {}; // can have text and label
     this.players;
+    this.playersCall = {
+      call: '', // call, fold, raise, check
+      money: 0, // when raised then taken,
+    }
     this.pointing = false;
     this.readyState = false;
     this.playerId;
     this.reset();
+  }
+
+  resetPlayersCall() {
+    this.playersCall = {
+      call: '', // call, fold, raise, check
+      money: 0, // when raised then taken,
+    }
   }
 
   addButton(button,callback) {
@@ -133,6 +144,58 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
   }
 
   reset() {
+
+    // this.players = [
+    //   {
+    //     positionId: 0,
+    //     name: 'Player0',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 1,
+    //     name: 'Player1',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 2,
+    //     name: 'Player2',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 3,
+    //     name: 'Player2',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 4,
+    //     name: 'Player2',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 5,
+    //     name: 'Player2',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 6,
+    //     name: 'Player2',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   },
+    //   {
+    //     positionId: 7,
+    //     name: 'Player2',
+    //     avatar: '#'+Math.floor(Math.random()*16777215).toString(16),
+    //     money: 600,
+    //   }
+    // ]
+    this.resetPlayersCall();
     let alerts = [];
     let host = '', playerName = '';
     console.log('resetting buttons');
@@ -159,6 +222,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
     });
     if (this.state === 'menu') {
       this.loadMenu();
+      // this.loadIngameView();
     } else if (this.state === 'host-game') {
       this.loadHostMenu();
     } else if (this.state === 'join-game') {
@@ -552,105 +616,19 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
   loadIngameView() {
     console.log("loaded ingame view");
     this.menuElements = [];
-    this.addButton(new TextButton(
-      this.ctx.canvas.width * .20,
-      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
-      this.ctx.canvas.width * .25,
-      this.ctx.canvas.width * .05,
-      {
-        idle : COLOR.brown2,
-        hover : COLOR.brown,
-        stroke : COLOR.white,
-        text : COLOR.white
-      },
-      'callButton',
-      'Call'
-    ), parent => {
-
-    });
-    this.addButton(new TextButton(
-      this.ctx.canvas.width * .50,
-      this.ctx.canvas.height - this.ctx.canvas.width * 0.1,
-      this.ctx.canvas.width * .25,
-      this.ctx.canvas.width * .05,
-      {
-        idle : COLOR.brown2,
-        hover : COLOR.brown,
-        stroke : COLOR.white,
-        text : COLOR.white
-      },
-      'foldButton',
-      'Fold'
-    ), parent => {
-
-    });
-
-    this.addButton(new TextButton(
-      this.ctx.canvas.width * .8,
-      this.ctx.canvas.height - this.ctx.canvas.width * .1,
-      this.ctx.canvas.width * .25,
-      this.ctx.canvas.width * .05,
-      {
-        idle : COLOR.brown2,
-        hover : COLOR.brown,
-        stroke : COLOR.white,
-        text : COLOR.white
-      },
-      'raiseButton',
-      'Raise'
-    ), parent => {
-
-    });
-
-    this.menuElements.push(new Label(
-      this.ctx.canvas.width * .9,
-      this.ctx.canvas.height - this.ctx.canvas.width * .17,
-      0,
-      this.ctx.canvas.width * 0.05,
-      COLOR.white,
-      'center',
-      'raiseSize'
-    ));
-
-    this.addSlider(new Slider(
-      this.ctx.canvas.width * .1,
-      this.ctx.canvas.height - this.ctx.canvas.width * .17,
-      this.ctx.canvas.width * .7,
-      this.ctx.canvas.width * .05,
-      'horizontal',
-      'raiseSlider'
-    ), (self,mouse) => {
-      self.moveTo(mouse);
-      // bind label to this
-      // let ownPlayer = this.players.filter(p => p.clientId === this.playerId)[0];
-      // if (ownPlayer) {
-      //   this.menuElements.forEach(me => {
-      //     if (me.label === 'raiseSize') {
-      //       me.text = Math.floor(Math.floor(self.value) * ownPlayer.money);
-      //     }
-      //   });
-      // }
-      this.menuElements.forEach(me => {
-        if (me.label === 'raiseSize') {
-          if(self.value === 1) {
-            me.text = 'All-In';
-          } else {
-            me.text = Math.floor(self.value * 630);
-          }
-        }
-      });
-    });
-    let avatarPos, moneyLabelProps, nameLabelProps;
+    let avatarPos, moneyLabelProps, nameLabelProps, chipLabelProps;
     // player müssen nach reordering geupdatet werden
     this.players.forEach(p => {
       avatarPos = playersAvatarPosition(p.positionId,this.ctx.canvas);
       moneyLabelProps = playersMoneyLabelProperties(p.positionId,this.ctx.canvas);
       nameLabelProps = playersNameLabelProperties(p.positionId,this.ctx.canvas);
+      chipLabelProps = playersChipLabelProperties(p.positionId,this.ctx.canvas);
       this.addAvatar(new Avatar(
         avatarPos.x,
         avatarPos.y,
         avatarWidth(this.ctx.canvas),
-        p.avatar
+        p.avatar,
+        p.broke ? 'broke' : p.hasTurn ? 'active' : ''
       ));
 
       this.menuElements.push(new Label(
@@ -658,7 +636,7 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         nameLabelProps.y,
         p.name,
         nameLabelProps.size,
-        COLOR.white,
+        p.broke ? COLOR.chipGrey : p.hasTurn ? COLOR.alertGreenHover : COLOR.white,
         'center',
         'PlayerName-' + p.clientId,
         true
@@ -668,14 +646,127 @@ module.exports = class InputLayerRenderEngine extends RenderEngine {
         moneyLabelProps.y,
         p.money,
         moneyLabelProps.size,
-        COLOR.white,
+        p.broke ? COLOR.chipGrey : p.hasTurn ? COLOR.alertGreenHover : COLOR.white,
         'center',
         'PlayerMoney-' + p.clientId,
         true
       ));
+      if (p.chipMoney > 0) {
+        this.menuElements.push(new Label(
+          chipLabelProps.x,
+          chipLabelProps.y,
+          p.chipMoney,
+          chipLabelProps.size,
+          COLOR.white,
+          chipLabelProps.alignment,
+          'chipLabel-' + p.clientId,
+          true
+        ));
+      }
     });
+    let hasTurn = this.players.find(p => p.clientId === this.playerId).hasTurn;
+    if (hasTurn) {
+      this.addButton(new TextButton(
+        this.ctx.canvas.width * .5 - tableHeight(this.ctx.canvas) * .27,
+        this.ctx.canvas.height * .5 + tableHeight(this.ctx.canvas) * .22,
+        tableHeight(this.ctx.canvas) * .2,
+        tableHeight(this.ctx.canvas) * .06,
+        {
+          idle : COLOR.brown2,
+          hover : COLOR.brown,
+          stroke : COLOR.white,
+          text : COLOR.white
+        },
+        'callButton',
+        'Call'
+      ), parent => {
+        parent.playersCall = {
+          call: 'call',
+        }
+      });
+      this.addButton(new TextButton(
+        this.ctx.canvas.width * .5 - tableHeight(this.ctx.canvas) * .27,
+        this.ctx.canvas.height * .5 + tableHeight(this.ctx.canvas) * .31,
+        tableHeight(this.ctx.canvas) * .2,
+        tableHeight(this.ctx.canvas) * .06,
+        {
+          idle : COLOR.brown2,
+          hover : COLOR.brown,
+          stroke : COLOR.white,
+          text : COLOR.white
+        },
+        'checkButton',
+        'Check'
+      ), parent => {
+        parent.playersCall = {
+          call: 'check',
+        }
+      });
+      this.addButton(new TextButton(
+        this.ctx.canvas.width * .5 - tableHeight(this.ctx.canvas) * .27,
+        this.ctx.canvas.height * .5 + tableHeight(this.ctx.canvas) * .4,
+        tableHeight(this.ctx.canvas) * .2,
+        tableHeight(this.ctx.canvas) * .06,
+        {
+          idle : COLOR.brown2,
+          hover : COLOR.brown,
+          stroke : COLOR.white,
+          text : COLOR.white
+        },
+        'foldButton',
+        'Fold'
+      ), parent => {
+        parent.playersCall = {
+          call: 'fold',
+        }
+      });
 
-    console.log(this.menuElements);
+      this.addButton(new TextButton(
+        this.ctx.canvas.width * .5 + tableHeight(this.ctx.canvas) * .27,
+        this.ctx.canvas.height * .5 + tableHeight(this.ctx.canvas) * .4,
+        tableHeight(this.ctx.canvas) * .2,
+        tableHeight(this.ctx.canvas) * .06,
+        {
+          idle : COLOR.brown2,
+          hover : COLOR.brown,
+          stroke : COLOR.white,
+          text : COLOR.white
+        },
+        'raiseButton',
+        'Raise'
+      ), parent => {
+        parent.playersCall = {
+          call: 'raise',
+          money: 0
+        }
+      });
+
+      this.menuElements.push(new Label(
+        this.ctx.canvas.width * .5 + tableHeight(this.ctx.canvas) * .27,
+        this.ctx.canvas.height * .5 + tableHeight(this.ctx.canvas) * .31,
+        0,
+        tableHeight(this.ctx.canvas) * 0.05,
+        COLOR.white,
+        'center',
+        'raiseSize'
+      ));
+
+      this.addSlider(new Slider(
+        this.ctx.canvas.width * .5 + tableHeight(this.ctx.canvas) * .42,
+        this.ctx.canvas.height * .5 + tableHeight(this.ctx.canvas) * .4,
+        tableHeight(this.ctx.canvas) * .7,
+        tableHeight(this.ctx.canvas) * .04,
+        'vertical',
+        'raiseSlider'
+      ), (self,mouse) => {
+        self.moveTo(mouse);
+        let opi = this.players.findIndex(p => p.clientId === this.playerId);
+        let raiseLabelIndex = this.menuElements.findIndex(me => me.label === 'raiseSize');
+        this.menuElements[raiseLabelIndex].text = Math.floor(self.value * this.players[opi].money);
+        // this.menuElements[raiseLabelIndex].text = Math.floor(self.value * 630);
+      });
+    }
+
 
   }
 

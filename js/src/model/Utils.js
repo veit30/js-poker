@@ -76,27 +76,27 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .063,
-            y: canvas.height * .5 - (canvas.width * .4) * .35
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .063,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .35
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .063,
-            y: canvas.height * .5 - (canvas.width * .4) * .35
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .063,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .35
           };
         }
       ],
       avatar: canvas => {
         return {
           x: canvas.width * .5,
-          y: canvas.height * .5 - (canvas.width * .4) * .6
+          y: canvas.height * .5 - module.exports.tableHeight(canvas) * .55
         }
       },
       chips: canvas => {
         return {
           x: canvas.width * .5,
-          y: canvas.height * .5 - (canvas.width * .4) * .6
+          y: canvas.height * .5 - module.exports.tableHeight(canvas) * .55
         }
       },
       positionName: 'Upper Middle (DEALER)',
@@ -106,27 +106,27 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .652,
-            y: canvas.height * .5 - (canvas.width * .4) * .265
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .652,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .548,
-            y: canvas.height * .5 - (canvas.width * .4) * .335
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .548,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .335
           };
         }
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .76,
-          y: canvas.height * .5 - (canvas.width * .4) * .54
+          x: canvas.width * .5 + module.exports.tableHeight(canvas) * .76,
+          y: canvas.height * .5 - module.exports.tableHeight(canvas) * .5
         }
       },
       chips: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .5,
-          y: canvas.height * .5 - (canvas.width * .4) * .17
+          x: canvas.width * .5 + module.exports.tableHeight(canvas) * .5,
+          y: canvas.height * .5 - module.exports.tableHeight(canvas) * .17
         }
       },
       positionName: 'Upper Right',
@@ -136,26 +136,26 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .8,
-            y: canvas.height * .5 - (canvas.width * .4) * .063
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .8,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .063
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .8,
-            y: canvas.height * .5 + (canvas.width * .4) * .063
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .8,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .063
           };
         }
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * 1.1,
+          x: canvas.width * .5 + module.exports.tableHeight(canvas) * 1.05,
           y: canvas.height * .5
         }
       },
       chips: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .6,
+          x: canvas.width * .5 + module.exports.tableHeight(canvas) * .6,
           y: canvas.height * .5
         }
       },
@@ -166,27 +166,27 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .652,
-            y: canvas.height * .5 + (canvas.width * .4) * .265
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .652,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .548,
-            y: canvas.height * .5 + (canvas.width * .4) * .335
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .548,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .335
           };
         }
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .76,
-          y: canvas.height * .5 + (canvas.width * .4) * .54
+          x: canvas.width * .5 + module.exports.tableHeight(canvas) * .76,
+          y: canvas.height * .5 + module.exports.tableHeight(canvas) * .5
         }
       },
       chips: canvas => {
         return {
-          x: canvas.width * .5 + (canvas.width * .4) * .5,
-          y: canvas.height * .5 + (canvas.width * .4) * .17
+          x: canvas.width * .5 + module.exports.tableHeight(canvas) * .5,
+          y: canvas.height * .5 + module.exports.tableHeight(canvas) * .17
         }
       },
       positionName: 'Lower Right',
@@ -196,57 +196,57 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .063,
-            y: canvas.height * .5 + (canvas.width * .4) * .35
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .063,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .35
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 + (canvas.width * .4) * .063,
-            y: canvas.height * .5 + (canvas.width * .4) * .35
+            x: canvas.width * .5 + module.exports.tableHeight(canvas) * .063,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .35
           };
         }
       ],
       avatar: canvas => {
         return {
           x: canvas.width * .5,
-          y: canvas.height * .5 + (canvas.width * .4) * .6
+          y: canvas.height * .5 + module.exports.tableHeight(canvas) * .55
         }
       },
       chips: canvas => {
         return {
           x: canvas.width * .5,
-          y: canvas.height * .5 + (canvas.width * .4) * .22
+          y: canvas.height * .5 + module.exports.tableHeight(canvas) * .22
         }
       },
-      positionName: 'Lower Middle',
+      positionName: 'Lower Middle (MAIN PLAYER)',
       cardRotation: 0
     },
     {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .652,
-            y: canvas.height * .5 + (canvas.width * .4) * .265
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .652,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .548,
-            y: canvas.height * .5 + (canvas.width * .4) * .335
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .548,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .335
           };
         }
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .76,
-          y: canvas.height * .5 + (canvas.width * .4) * .54
+          x: canvas.width * .5 - module.exports.tableHeight(canvas) * .76,
+          y: canvas.height * .5 + module.exports.tableHeight(canvas) * .5
         }
       },
       chips: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .5,
-          y: canvas.height * .5 + (canvas.width * .4) * .17
+          x: canvas.width * .5 - module.exports.tableHeight(canvas) * .5,
+          y: canvas.height * .5 + module.exports.tableHeight(canvas) * .17
         }
       },
       positionName: 'Lower Left',
@@ -256,26 +256,26 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .8,
-            y: canvas.height * .5 - (canvas.width * .4) * .063
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .8,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .063
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .8,
-            y: canvas.height * .5 + (canvas.width * .4) * .063
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .8,
+            y: canvas.height * .5 + module.exports.tableHeight(canvas) * .063
           };
         }
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * 1.1,
+          x: canvas.width * .5 - module.exports.tableHeight(canvas) * 1.05,
           y: canvas.height * .5,
         }
       },
       chips: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .6,
+          x: canvas.width * .5 - module.exports.tableHeight(canvas) * .6,
           y: canvas.height * .5
         }
       },
@@ -286,27 +286,27 @@ module.exports = {
       cards: [
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .652,
-            y: canvas.height * .5 - (canvas.width * .4) * .265
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .652,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .265
           };
         },
         canvas => {
           return {
-            x: canvas.width * .5 - (canvas.width * .4) * .548,
-            y: canvas.height * .5 - (canvas.width * .4) * .335
+            x: canvas.width * .5 - module.exports.tableHeight(canvas) * .548,
+            y: canvas.height * .5 - module.exports.tableHeight(canvas) * .335
           };
         }
       ],
       avatar: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .76,
-          y: canvas.height * .5 - (canvas.width * .4) * .54
+          x: canvas.width * .5 - module.exports.tableHeight(canvas) * .76,
+          y: canvas.height * .5 - module.exports.tableHeight(canvas) * .5
         }
       },
       chips: canvas => {
         return {
-          x: canvas.width * .5 - (canvas.width * .4) * .5,
-          y: canvas.height * .5 - (canvas.width * .4) * .17
+          x: canvas.width * .5 - module.exports.tableHeight(canvas) * .5,
+          y: canvas.height * .5 - module.exports.tableHeight(canvas) * .17
         }
       },
       positionName: 'Upper Left',
@@ -386,7 +386,8 @@ module.exports = {
     if (hostParams[0] !== '') return true;
   },
   chipRadius: canvas => canvas.width * .4 * .03,
-  avatarWidth: canvas => canvas.width * .1,
+  avatarWidth: canvas => canvas.width * .07,
+  tableHeight: canvas => canvas.width * .4,
 };
 
 module.exports.playersChipPosition = (pIndex,cIndex,cAmount,canvas) => {
@@ -406,7 +407,7 @@ module.exports.playersNameLabelProperties = (pId,canvas) => {
   let avatarPos = module.exports.PLAYER_POSITION[pId].avatar(canvas);
   return {
     x: avatarPos.x,
-    y: avatarPos.y - (canvas.width * .04),
+    y: avatarPos.y - module.exports.avatarWidth(canvas) * .3,
     size: (canvas.width * .03)
   }
 };
@@ -415,10 +416,20 @@ module.exports.playersMoneyLabelProperties = (pId,canvas) => {
   let avatarPos = module.exports.PLAYER_POSITION[pId].avatar(canvas);
   return {
     x: avatarPos.x,
-    y: avatarPos.y + (canvas.width * .04),
+    y: avatarPos.y + module.exports.avatarWidth(canvas) * .2,
     size: (canvas.width * .02)
   }
 };
+
+module.exports.playersChipLabelProperties = (pId,canvas) => {
+  let chipPos = module.exports.PLAYER_POSITION[pId].chips(canvas);
+  return {
+    x: chipPos.x + (pId > 3 ? module.exports.chipRadius(canvas) * 2 : -module.exports.chipRadius(canvas) * 2 ),
+    y: chipPos.y,
+    size: (canvas.width * .01),
+    alignment: pId > 3 ? 'left' : 'right'
+  }
+}
 
 module.exports.playersCardRotation =  playerId => {
   return module.exports.PLAYER_POSITION[playerId].cardRotation;

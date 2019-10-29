@@ -1,11 +1,12 @@
 const {COLOR} = require('./Utils.js');
 
 module.exports = class Avatar {
-  constructor(x,y,width,avatar) {
+  constructor(x,y,width,avatar,state) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.avatar = avatar;
+    this.state = state || '';
   }
 
   intersect() {
@@ -16,7 +17,13 @@ module.exports = class Avatar {
     // TODO implement Image
     ctx.fillStyle = this.avatar;
     ctx.lineWidth = this.width * .07;
-    ctx.strokeStyle = COLOR.white;
+    if (this.state === 'active') {
+      ctx.strokeStyle = COLOR.alertGreenHover;
+    } else if (this.state === 'broke') {
+      ctx.strokeStyle = COLOR.chipGrey;
+    } else {
+      ctx.strokeStyle = COLOR.white;
+    }
     ctx.beginPath();
     ctx.arc(
       this.x,

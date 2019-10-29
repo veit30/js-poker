@@ -9,6 +9,7 @@ module.exports = class Game {
     this.communityCards = [];
     this.pot = 0;
     this.lastPot = 0;
+    this.highestBet = 0;
     this.state = 'new'; // flop, turn, river, end
     this.chips = [];
     this.chipTypes = {};
@@ -21,8 +22,8 @@ module.exports = class Game {
   startNewGame() {
     this.generateDeck();
     this.shuffleDeck();
-    this.assignBlinds();
     this.sortPlayers();
+    this.assignBlinds();
     this.dealPlayercards();
     this.chipTypes = {
       100: COLOR.chipPurple,
@@ -32,14 +33,81 @@ module.exports = class Game {
       5: COLOR.chipRed
     };
     this.assignMoney(2500);
-    this.setBlind(5);
+    this.blind = 10;
     this.payBlinds();
-    this.state = 'new';
-  };
+    this.nextPlayer();
+  }
 
-  setBlind(val) {
-    this.blinds.small = val;
-    this.blinds.big = val * 2;
+  get currentPlayer() {
+    return this.players.findIndex(p => p.hasTrun);
+  }
+
+  set blind(val) {
+    this.blinds.small = Math.floor(val / 2);
+    this.blinds.big = val;
+  }
+
+  get blind() {
+    return this.blinds.big;
+  }
+
+  callFrom(clientId) {
+    let pi = this.players.findIndex(p => p.clientId === clientId);
+    let oldMoney = this.players[pi].money;
+    let bet;
+    if (this.highestBet === 0) {
+      bet = this.blind
+    } else {
+      bet = this.highestBet - this.players[pi].lastBet
+    }
+    this.players[pi].money -= bet;
+    if (this.players[pi].money > 0) {
+      this.players[pi].lastBet = this.highestBet;
+    } else {
+      this.players[pi].lastBet = oldMoney;
+      this.players[pi].money = 0;
+    }
+    console.log(this.players);
+    this.nextPlayer();
+    return true;
+  }
+
+  foldFrom(clientId) {
+    let pi = this.players.findIndex(p => p.clientId === clientId);
+    this.players[pi].fold = true;
+    this.nextPlayer();
+  }
+
+  raiseFrom(clientId,value) {
+
+  }
+
+  checkFrom(clientId) {
+
+  }
+
+  getPlayerAfterBig() {
+    let next = this.players.findIndex(p => p.blind === 'big');
+    do {
+      ++next;
+      if (next === this.players.length) {
+        next = 0;
+      }
+    } while (this.players[next].broke);
+    return next;
+  }
+
+  nextPlayer() {
+    let currentPlayer = this.players.findIndex(p => p.hasTurn);
+    this.players[currentPlayer].hasTurn = false;
+    do {
+      currentPlayer++;
+      if (currentPlayer === this.players.length) {
+        currentPlayer = 0;
+      }
+    } while (this.players[currentPlayer].broke || this.players[currentPlayer].fold);
+
+    this.players[currentPlayer].hasTurn = true;
   }
 
   startNewRound() {
@@ -63,6 +131,8 @@ module.exports = class Game {
           p.lastBet = this.blinds[p.blind];
           p.money = moneyAfterBlind;
         }
+        this.pot += p.lastBet;
+        if (p.lastBet > this.highestBet) this.highestBet = p.lastBet;
       }
 
     });
@@ -75,6 +145,7 @@ module.exports = class Game {
     this.chips = [];
     this.players = this.players.map(p => {
       p.cards = [];
+      p.hasTurn = false;
       return p;
     })
   }
@@ -84,9 +155,13 @@ module.exports = class Game {
     this.players[randNum].blind = 'small';
     if ((randNum + 1) >= this.players.length) {
       this.players[0].blind = 'big';
+      this.players[0].hasTurn = true;
     } else {
-      this.players[++randNum].blind = 'big';
+      this.players[randNum + 1].blind = 'big';
+      this.players[randNum + 1].hasTurn = true;
     }
+
+    console.log(this.players);
   }
 
   rotateBlinds() {
@@ -108,6 +183,9 @@ module.exports = class Game {
         if(blindIndex < this.players.length) {
           if (!this.players[blindIndex].broke) {
             this.players[blindIndex].blind = b;
+            if (b === 'big') {
+              this.players[blindeIndex].hasTurn = true;
+            }
             flag = true;
           }
         } else {

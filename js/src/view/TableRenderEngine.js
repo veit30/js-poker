@@ -12,8 +12,8 @@ module.exports = class TableRenderEngine extends RenderEngine {
     this.renderCCBorder();
     this.renderPotSizeBorder();
     this.renderTableChip({
-      x: this.ctx.canvas.width * .5 - (this.ctx.canvas.width * .4) * .16,
-      y: this.ctx.canvas.height * .5 - (this.ctx.canvas.width * .4) * .16,
+      x: this.ctx.canvas.width * .5 - this.tableHeight * .16,
+      y: this.ctx.canvas.height * .5 - this.tableHeight * .16,
       color: COLOR.black
     })
   }
@@ -24,7 +24,7 @@ module.exports = class TableRenderEngine extends RenderEngine {
       ctx = this.ctx,
       canvasWidth = ctx.canvas.width,
       canvasHeight = ctx.canvas.height,
-      tableHeight = canvasWidth * .4,
+      tableHeight = this.tableHeight,
       halfCanvasWidth = canvasWidth * .5,
       halfCanvasHeight = canvasHeight * .5,
       halfTableHeight = tableHeight * .5;
@@ -67,7 +67,7 @@ module.exports = class TableRenderEngine extends RenderEngine {
     let ctx = this.ctx,
       canvasWidth = ctx.canvas.width,
       canvasHeight = ctx.canvas.height,
-      tableHeight = canvasWidth * .4,
+      tableHeight = this.tableHeight,
       halfTableHeight = tableHeight * .5,
       halfCanvasWidth = canvasWidth * .5,
       halfCanvasHeight = canvasHeight * .5;
@@ -139,7 +139,7 @@ module.exports = class TableRenderEngine extends RenderEngine {
       ctx = this.ctx,
       halfCanvasWidth = ctx.canvas.width * .5,
       halfCanvasHeight = ctx.canvas.height * .5,
-      height = (ctx.canvas.width * .4) * .13,
+      height = this.tableHeight * .13,
       width = height * 5.2,
       radius = width * .06,
       halfWidth = width * .5,
@@ -178,13 +178,13 @@ module.exports = class TableRenderEngine extends RenderEngine {
       ctx = this.ctx,
       halfCanvasWidth = ctx.canvas.width * .5,
       halfCanvasHeight = ctx.canvas.height * .5,
-      height = (ctx.canvas.width * .4) * 0,
+      height = 0,
       heightPos = (ctx.canvas.width * .4) * .08,
-      width = (ctx.canvas.width * .4) * .4,
+      width = this.tableHeight * .4,
       radius = width * .1,
       halfWidth = width * .5,
       halfHeight = height * .5,
-      strokeWidth = ctx.canvas.width * .002704
+      strokeWidth = this.tableHeight * .00676
 
     ctx.save();
 
@@ -210,7 +210,7 @@ module.exports = class TableRenderEngine extends RenderEngine {
   renderTableChip({x,y,color,rotation,radius}) {
     let
       ctx = this.ctx;
-    radius = radius || ctx.canvas.width * .4 * .03;
+    radius = radius || this.tableHeight * .03;
     color = color || COLOR.red;
     rotation = rotation || 0;
     ctx.save();
@@ -249,5 +249,9 @@ module.exports = class TableRenderEngine extends RenderEngine {
     ctx.closePath();
     ctx.stroke();
     ctx.restore();
+  }
+
+  get tableHeight() {
+    return this.ctx.canvas.width * .4;
   }
 }

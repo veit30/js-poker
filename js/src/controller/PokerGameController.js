@@ -46,7 +46,7 @@ module.exports = class PokerGameController {
     );
     this.objectController = new GameObjectController(this.gameCanvas.getContext('2d'));
     this.addResizeListener();
-    this.tableView.renderBackground(COLOR.lightGray);
+    this.tableView.renderBackground(COLOR.darkGray);
     this.tableView.renderTable();
 
   }
@@ -66,7 +66,7 @@ module.exports = class PokerGameController {
 
     window.addEventListener('resize-end',() => {
       this.updateCanvas();
-      this.tableView.renderBackground(COLOR.lightGray);
+      this.tableView.renderBackground(COLOR.darkGray);
       this.tableView.renderTable();
       this.objectController.windowResized = true;
       this.inputView.reset();
@@ -143,79 +143,75 @@ module.exports = class PokerGameController {
   // basic game loop function
   async start() {
     this.inputView.renderMenu();
-    // let pos,rot,avatar,avatarPos, moneyLabelProps, nameLabelProps, moneyLabel, nameLabel;
-    // let chipAmount = 5;
-    // let colors = [COLOR.chipPurple,COLOR.chipRed,COLOR.chipBlue,COLOR.chipGrey,COLOR.chipGreen,COLOR.chipYellow]
-    // let cycle = 0;
-    // for(let i = 0; i < 8; i++) {
-    //   for(let j = 0; j < chipAmount; j++) {
-    //     pos = playersChipPosition(i,j,chipAmount,this.gameCanvas);
-    //     this.gameView.renderChip({
-    //       x: pos.x,
-    //       y: pos.y,
-    //       rotation: 0,
-    //       color: colors[cycle++]
-    //     });
-    //     if (cycle === 5) cycle = 0;
-    //   }
-    //   pos = playersCardPosition(i,0,this.gameCanvas);
-    //   rot = playersCardRotation(i);
-    //   this.gameView.renderCardBack({
-    //     x: pos.x,
-    //     y: pos.y,
-    //     rotation: rot,
-    //   })
-    //   pos = playersCardPosition(i,1,this.gameCanvas);
-    //   this.gameView.renderCardBack({
-    //     x: pos.x,
-    //     y: pos.y,
-    //     rotation: rot,
-    //   });
-    //   avatarPos = playersAvatarPosition(i,this.inputCanvas);
-    //   avatar = new Avatar(
-    //     avatarPos.x,
-    //     avatarPos.y,
-    //     avatarWidth(this.inputCanvas),
-    //     COLOR.chipBlue
-    //   );
-    //   avatar.render(this.inputCanvas.getContext('2d'));
-    //   moneyLabelProps = playersMoneyLabelProperties(i,this.inputCanvas);
-    //   nameLabelProps = playersNameLabelProperties(i,this.inputCanvas);
-    //   moneyLabel = new Label(
-    //     moneyLabelProps.x,
-    //     moneyLabelProps.y,
-    //     '2500',
-    //     moneyLabelProps.size,
-    //     COLOR.white
-    //   );
-    //   moneyLabel.render(this.inputCanvas.getContext('2d'));
-    //   nameLabel = new Label(
-    //     nameLabelProps.x,
-    //     nameLabelProps.y,
-    //     'Player-' + i,
-    //     nameLabelProps.size,
-    //     COLOR.white
-    //   )
-    //   nameLabel.render(this.inputCanvas.getContext('2d'));
-    // }
+    let pos,rot,avatar,avatarPos, moneyLabelProps, nameLabelProps, moneyLabel, nameLabel;
+    let chipAmount = 5;
+    let colors = [COLOR.chipPurple,COLOR.chipRed,COLOR.chipBlue,COLOR.chipGrey,COLOR.chipGreen,COLOR.chipYellow]
+    let cycle = 0;
+    for(let i = 0; i < 8; i++) {
+      for(let j = 0; j < chipAmount; j++) {
+        pos = playersChipPosition(i,j,chipAmount,this.gameCanvas);
+        this.gameView.renderChip({
+          x: pos.x,
+          y: pos.y,
+          rotation: 0,
+          color: colors[cycle++]
+        });
+        if (cycle === 5) cycle = 0;
+      }
+      pos = playersCardPosition(i,0,this.gameCanvas);
+      rot = playersCardRotation(i);
+      this.gameView.renderCardBack({
+        x: pos.x,
+        y: pos.y,
+        rotation: rot,
+      })
+      pos = playersCardPosition(i,1,this.gameCanvas);
+      this.gameView.renderCardBack({
+        x: pos.x,
+        y: pos.y,
+        rotation: rot,
+      });
+      // avatarPos = playersAvatarPosition(i,this.inputCanvas);
+      // avatar = new Avatar(
+      //   avatarPos.x,
+      //   avatarPos.y,
+      //   avatarWidth(this.inputCanvas),
+      //   COLOR.chipBlue
+      // );
+      // avatar.render(this.inputCanvas.getContext('2d'));
+      // moneyLabelProps = playersMoneyLabelProperties(i,this.inputCanvas);
+      // nameLabelProps = playersNameLabelProperties(i,this.inputCanvas);
+      // moneyLabel = new Label(
+      //   moneyLabelProps.x,
+      //   moneyLabelProps.y,
+      //   '2500',
+      //   moneyLabelProps.size,
+      //   COLOR.white
+      // );
+      // moneyLabel.render(this.inputCanvas.getContext('2d'));
+      // nameLabel = new Label(
+      //   nameLabelProps.x,
+      //   nameLabelProps.y,
+      //   'Player-' + i,
+      //   nameLabelProps.size,
+      //   COLOR.white
+      // )
+      // nameLabel.render(this.inputCanvas.getContext('2d'));
+    }
     if (this.inputView.state === 'ingame') {
-      // Keyboard inputs are only used for testing purposes for now
-      if (this.inputHandler.askKeyPress(KEY.C)) {
-        this.flopTurnRiver();
-        this.game.round++;
+      switch(this.inputView.playersCall.call) {
+        case 'call':
+          this.clientSocket.emit('call');
+          break;
+        case 'fold':
+          this.clientSocket.emit('fold');
+          break;
+        case 'check':
+          this.clientSocket.emit('check')
+          break;
+        case 'raise':
+        this.clientSocket.emit('raise',this.inputView.playersCall.money);
       }
-      if (this.inputHandler.askKeyPress(KEY.UP)) {
-        this.game.pot++;
-        this.game.potChanged = true;
-      }
-      if (this.inputHandler.askKeyPress(KEY.DOWN)) {
-        this.game.pot--;
-        this.game.potChanged = true;
-      }
-      // if (this.game.hasNewPot()) {
-      //   this.displayPotSize();
-      //   this.game.noticedPotSize();
-      // }
       this.updateGameObjects();
       this.renderGameObjects();
     } else if (this.inputView.state === 'game-lobby') {
@@ -247,7 +243,6 @@ module.exports = class PokerGameController {
           }
         }, 3000);
         this.clientSocket.emit('playerJoin',{name:this.inputView.inputs.name});
-        this.inputView.playerId = this.clientSocket.id;
       }
       // everytime else
       if (this.inputView.readyState && !this.clientReadyState) {
@@ -287,6 +282,9 @@ module.exports = class PokerGameController {
     this.clientSocket.on('msg', data => {
       console.log(`Received msg:${data.msg}`);
     });
+    this.clientSocket.on('confirmId',id => {
+      this.inputView.playerId = id;
+    })
     this.clientSocket.on('returnPlayers', data => {
       if(!data) {
         this.inputView.state = 'menu';
@@ -345,7 +343,6 @@ module.exports = class PokerGameController {
         return c;
       });
       // add right player positions
-      console.log(this.game);
       this.inputView.players = this.game.players;
       this.initGameObjects();
       this.movePlayerCards();
@@ -354,7 +351,27 @@ module.exports = class PokerGameController {
       this.inputView.state = 'ingame';
       this.inputView.reset();
     });
-    // this.clientSocket.on('');
+
+    this.clientSocket.on('playerCall', game => {
+      // updating all players
+      let playerIndex;
+      game.players.forEach(p => {
+        console.log(p);
+        playerIndex = this.game.players.findIndex(gamePlayer => gamePlayer.clientId === p.clientId);
+        this.game.players[playerIndex].money = p.money;
+        this.game.players[playerIndex].lastBet = p.lastBet;
+        this.game.players[playerIndex].hasTurn = p.hasTurn;
+        this.game.players[playerIndex].fold = p.fold;
+      });
+      this.inputView.players = this.game.players;
+
+      this.movePlayerChips();
+      this.displayPotSize();
+      this.inputView.reset();
+    });
+    this.clientSocket.on('callWarning', () => {
+      sendWarning('You ar not able to call', 'callWarning');
+    });
     this.clientSocket.on('connect', () => {
       this.connectToServer = true;
     });
@@ -364,15 +381,7 @@ module.exports = class PokerGameController {
   }
 
   displayPotSize() {
-    this.tableView.renderTable();
-    let money = 0;
-    this.game.players.forEach(p => {
-      money += p.chipMoney
-    });
-    money += this.game.pot;
-    console.log(money);
-    console.log(numDots(money));
-    let potText = new Text(numDots(money),this.inputCanvas.width * .03,FONT.MAIN,undefined,undefined,'left');
+    let potText = new Text(numDots(this.game.pot),this.inputCanvas.width * .03,FONT.MAIN,undefined,undefined,'left');
     let width = potText.calcWidth(this.inputCanvas.getContext('2d'));
     this.tableView.renderText(
       this.inputCanvas.width * .5 + ((this.inputCanvas.width * .08) - width * 1.3),
@@ -432,28 +441,38 @@ module.exports = class PokerGameController {
           delay: delay,
           flipAfter: player.clientId === this.clientSocket.id ? true : false
         })
-        delay += 500;
+        delay += 200;
       })
     }
   }
 
   movePlayerChips() {
     let delay = 100;
-    let chips, chipPos, bet, avatarPos;
-
+    let chips, chipPos, bet, avatarPos, chipMoney;
+    // proably bugged because not adding new chips but redoing moneyToChips every time
+    let chipBackup = {};
     this.game.players.forEach(p => {
-      bet = p.lastBet;
+      chipBackup[p.clientId] = p.chips;
+    });
+    console.log(chipBackup);
+    this.game.players.forEach(p => {
+      chipMoney = p.chips.reduce((a,c) => a+c.value,0);
+      bet = p.lastBet - chipMoney;
       chips = this.game.moneyToChips(bet);
-      console.log(chips);
       avatarPos = playersAvatarPosition(p.positionId, this.gameCanvas);
-      p.chips.push(...chips);
-      p.chips.forEach((c,i) => {
-        chipPos = playersChipPosition(p.positionId,i,chips.length,this.gameCanvas);
+      chips = chips.map(c => {
         c.setProps({
           x: avatarPos.x,
           y: avatarPos.y,
           rotation: 0
         });
+        return c;
+      });
+      p.chips = chips;
+      p.chips.push(...chipBackup[p.clientId]);
+      p.chips.map((c,i) => {
+        chipPos = playersChipPosition(p.positionId,i,p.chips.length,this.gameCanvas);
+        console.log(chipPos);
         this.objectController.addMove(c, {
           xd: chipPos.x,
           yd: chipPos.y,
@@ -463,7 +482,8 @@ module.exports = class PokerGameController {
           delay: delay
         });
         delay += 100;
-      })
+        return c;
+      });
     })
 
   }
