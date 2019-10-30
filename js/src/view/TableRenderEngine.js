@@ -7,6 +7,7 @@ module.exports = class TableRenderEngine extends RenderEngine {
   }
 
   renderTable() {
+    this.renderBackground(COLOR.darkGray);
     this.renderTablePlate();
     this.renderTableBorder();
     this.renderCCBorder();

@@ -46,7 +46,6 @@ module.exports = class PokerGameController {
     );
     this.objectController = new GameObjectController(this.gameCanvas.getContext('2d'));
     this.addResizeListener();
-    this.tableView.renderBackground(COLOR.darkGray);
     this.tableView.renderTable();
 
   }
@@ -363,6 +362,7 @@ module.exports = class PokerGameController {
         this.game.players[playerIndex].hasTurn = p.hasTurn;
         this.game.players[playerIndex].fold = p.fold;
       });
+      this.game.pot = game.pot;
       this.inputView.players = this.game.players;
 
       this.movePlayerChips();
@@ -383,6 +383,7 @@ module.exports = class PokerGameController {
   displayPotSize() {
     let potText = new Text(numDots(this.game.pot),this.inputCanvas.width * .03,FONT.MAIN,undefined,undefined,'left');
     let width = potText.calcWidth(this.inputCanvas.getContext('2d'));
+    this.tableView.renderTable();
     this.tableView.renderText(
       this.inputCanvas.width * .5 + ((this.inputCanvas.width * .08) - width * 1.3),
       this.inputCanvas.height *.5 - this.inputCanvas.width * .054,
@@ -450,11 +451,6 @@ module.exports = class PokerGameController {
     let delay = 100;
     let chips, chipPos, bet, avatarPos, chipMoney;
     // proably bugged because not adding new chips but redoing moneyToChips every time
-    let chipBackup = {};
-    this.game.players.forEach(p => {
-      chipBackup[p.clientId] = p.chips;
-    });
-    console.log(chipBackup);
     this.game.players.forEach(p => {
       chipMoney = p.chips.reduce((a,c) => a+c.value,0);
       bet = p.lastBet - chipMoney;
@@ -468,11 +464,9 @@ module.exports = class PokerGameController {
         });
         return c;
       });
-      p.chips = chips;
-      p.chips.push(...chipBackup[p.clientId]);
+      p.chips.push(...chips);
       p.chips.map((c,i) => {
         chipPos = playersChipPosition(p.positionId,i,p.chips.length,this.gameCanvas);
-        console.log(chipPos);
         this.objectController.addMove(c, {
           xd: chipPos.x,
           yd: chipPos.y,

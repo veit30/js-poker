@@ -63,9 +63,11 @@ module.exports = class Game {
     this.players[pi].money -= bet;
     if (this.players[pi].money > 0) {
       this.players[pi].lastBet = this.highestBet;
+      this.pot += bet;
     } else {
       this.players[pi].lastBet = oldMoney;
       this.players[pi].money = 0;
+      this.pot += oldMoney
     }
     console.log(this.players);
     this.nextPlayer();

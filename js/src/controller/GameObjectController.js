@@ -104,16 +104,17 @@ module.exports = class GameObjectController {
       dx = xd - obj.x,
       dy = yd - obj.y;
     obj.animLen = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-    obj.direction.x = 1 / obj.animLen * dx;
-    obj.direction.y = 1 / obj.animLen * dy;
-
+    if(obj.animLen === 0) {
+      obj.direction.x = 0;
+      obj.direction.y = 0;
+    } else {
+      obj.direction.x = 1 / obj.animLen * dx;
+      obj.direction.y = 1 / obj.animLen * dy;
+    }
     obj.startRotation = obj.rotation;
     obj.rotationLen = rotation;
-
     obj.delay = delay;
-
     obj.flipAfter = flipAfter || false;
-
     switch(easing) {
       case 'ease-in': obj.eF = EASING_FUNCTION.easeIn;break;
       case 'ease-out': obj.eF = EASING_FUNCTION.easeOut;break;
