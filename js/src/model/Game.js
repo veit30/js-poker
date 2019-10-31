@@ -100,6 +100,7 @@ module.exports = class Game {
   }
 
   nextPlayer() {
+    if (this.activePlayers.length < 2) return false // round winner
     let currentPlayer = this.players.findIndex(p => p.hasTurn);
     this.players[currentPlayer].hasTurn = false;
     do {
@@ -110,6 +111,10 @@ module.exports = class Game {
     } while (this.players[currentPlayer].broke || this.players[currentPlayer].fold);
 
     this.players[currentPlayer].hasTurn = true;
+  }
+
+  get activePlayers() {
+    return this.players.filter(p => !p.broke && !p.fold);
   }
 
   startNewRound() {

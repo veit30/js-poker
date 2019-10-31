@@ -113,7 +113,7 @@ module.exports = class GameObjectController {
     }
     obj.startRotation = obj.rotation;
     obj.rotationLen = rotation;
-    obj.delay = delay;
+    obj.delay = delay || 0;
     obj.flipAfter = flipAfter || false;
     switch(easing) {
       case 'ease-in': obj.eF = EASING_FUNCTION.easeIn;break;

@@ -204,6 +204,7 @@ module.exports = class PokerGameController {
           break;
         case 'fold':
           this.clientSocket.emit('fold');
+          console.log("emit fold");
           break;
         case 'check':
           this.clientSocket.emit('check')
@@ -355,12 +356,10 @@ module.exports = class PokerGameController {
       // updating all players
       let playerIndex;
       game.players.forEach(p => {
-        console.log(p);
         playerIndex = this.game.players.findIndex(gamePlayer => gamePlayer.clientId === p.clientId);
         this.game.players[playerIndex].money = p.money;
         this.game.players[playerIndex].lastBet = p.lastBet;
         this.game.players[playerIndex].hasTurn = p.hasTurn;
-        this.game.players[playerIndex].fold = p.fold;
       });
       this.game.pot = game.pot;
       this.inputView.players = this.game.players;
@@ -369,6 +368,19 @@ module.exports = class PokerGameController {
       this.displayPotSize();
       this.inputView.reset();
     });
+
+    this.clientSocket.on('playerFold', game => {
+      let playerIndex;
+      game.players.forEach(p => {
+        playerIndex = this.game.players.findIndex(gamePlayer => gamePlayer.clientId === p.clientId);
+        this.game.players[playerIndex].fold = p.fold;
+        this.game.players[playerIndex].hasTurn = p.hasTurn;
+      });
+      this.inputView.players = this.game.players;
+
+      this.movePlayerFold();
+      this.inputView.reset();
+    })
     this.clientSocket.on('callWarning', () => {
       sendWarning('You ar not able to call', 'callWarning');
     });
@@ -447,8 +459,28 @@ module.exports = class PokerGameController {
     }
   }
 
+  movePlayerFold() {
+    let cardRotation;
+    this.game.players.forEach(p => {
+      if (p.fold) {
+        //karten zu dem deck schieben
+        p.cards.map((c,i) => {
+          cardRotation = playersCardRotation(p.positionId);
+          this.objectController.addMove(c,{
+            xd: this.gameCanvas.width * .5,
+            yd: this.gameCanvas.height * .5 - (this.gameCanvas.width * .4) * .35,
+            rotation: -cardRotation,
+            easing: 'ease-out',
+            time: 200
+          });
+        })
+        //chips bleiben vorerst
+      }
+    })
+  }
+
   movePlayerChips() {
-    let delay = 100;
+    let delay = 0;
     let chips, chipPos, bet, avatarPos, chipMoney;
     // proably bugged because not adding new chips but redoing moneyToChips every time
     this.game.players.forEach(p => {

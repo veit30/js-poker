@@ -98,18 +98,19 @@ module.exports = class GameServer {
       });
 
       socket.on('fold', () => {
+        // check if it was the last player
         this.game.foldFrom(socket.id);
-        io.emit('playerFold', this.game);
+        this.io.emit('playerFold', this.game);
       });
 
       socket.on('check', () => {
         this.game.checkFrom(socket.id);
-        io.emit('playerCheck', this.game);
+        this.io.emit('playerCheck', this.game);
       });
 
       socket.on('raise', money => {
         this.game.raiseFrom(socket.id, money);
-        io.emit('playerRaise', this.game);
+        this.io.emit('playerRaise', this.game);
       });
 
       socket.on('playerNotReady', () => {
