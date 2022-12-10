@@ -19,7 +19,7 @@
   "homepage": "https://github.com/vs1998/js-poker#readme",
   "devDependencies": {
     "electron": "^5.0.10",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "socket.io": "^2.3.0"
   }
 }
